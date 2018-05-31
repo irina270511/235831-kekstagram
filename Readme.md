@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Irina Galeeva](https://up.htmlacademy.ru/javascript/14/user/235831).
-* Наставник: `Неизвестно`.
+* Наставник: `Yuri Katkov`
 
 ---
 
