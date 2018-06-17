@@ -96,7 +96,7 @@ var getPictures = function (picturesQuantity) {
 };
 
 /**
- * Создает DOM-элемент на основе шаблона, превью картинок на главной странице.
+ * Создает DOM-элемент на основе шаблона, превью картинки на главной странице.
  *
  * @param {object} picture - картинка с характеристиками.
  * @param {string} picture.url - путь к картинке.
@@ -136,30 +136,18 @@ var renderComment = function (comment) {
   return commentElement;
 };
 
-/**
- * Отрисовывает на странице комментарии (DOM-элементы) на основе данных массива.
- *
- * @param {array} comments - массив комментариев.
- * @param {object} appendTo - место в DOM-дереве для добавления элементов.
- */
-var renderCommentsList = function (comments, appendTo) {
-  var fragment = document.createDocumentFragment();
-  for (var i = 0; i < comments.length; i++) {
-    fragment.appendChild(renderComment(comments[i]));
-  }
-  appendTo.appendChild(fragment);
-};
 
 /**
- * Отрисовывает на странице картинки (DOM-элементы) на основе данных массива картинок.
+ * Добавляет на страницу DOM-элементы на основе данных массива.
  *
- * @param {array} pictures - массив картинок.
+ * @param {array} elements - массив элементов.
  * @param {object} appendTo - место в DOM-дереве для добавления элементов.
+ * @param {function} renderFunction - функция, которая отрисовывает каждый элемент массива.
  */
-var renderPreviewPicturesList = function (pictures, appendTo) {
+var renderElements = function (elements, appendTo, renderFunction) {
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < pictures.length; i++) {
-    fragment.appendChild(renderPreviewPicture(pictures[i]));
+  for (var i = 0; i < elements.length; i++) {
+    fragment.appendChild(renderFunction(elements[i]));
   }
   appendTo.appendChild(fragment);
 };
@@ -178,8 +166,8 @@ var renderBigPicture = function (picture) {
   var bigPicture = document.querySelector('.big-picture');
   bigPicture.classList.remove('hidden');
   // Рендерим и вставляем лист с комментариями
-  var socialComments = bigPicture.querySelector('.social__comments');
-  renderCommentsList(picture.comments, socialComments);
+  var placeForComments = bigPicture.querySelector('.social__comments');
+  renderElements(picture.comments, placeForComments, renderComment);
   // Вставляем остальные параметры картинки
   bigPicture.querySelector('.big-picture__img > img').src = picture.url;
   bigPicture.querySelector('.likes-count').textContent = picture.likes;
@@ -188,15 +176,15 @@ var renderBigPicture = function (picture) {
 };
 
 var pictures = getPictures(25);
-var place = document.querySelector('.pictures');
-renderPreviewPicturesList(pictures, place);
+var placeForPictures = document.querySelector('.pictures');
+renderElements(pictures, placeForPictures, renderPreviewPicture);
 
 renderBigPicture(pictures[0]);
 
 document.querySelector('.social__comment-count')
-        .classList
-        .add('visually-hidden');
+  .classList
+  .add('visually-hidden');
 
 document.querySelector('.social__loadmore')
-        .classList
-        .add('visually-hidden');
+  .classList
+  .add('visually-hidden');
