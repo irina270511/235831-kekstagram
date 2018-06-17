@@ -15,14 +15,14 @@ var AVATAR_QUANTITY = 6;
  * @param {number} min - минимальное число массива. Любое число, может быть отрицательным и/или дробным.
  * @param {number} max - максимальное число массива. Любое число, может быть отрицательным и/или дробным. Должно быть больше или равно минимальному числу массива.
  * @param {number} step - шаг массива. Положительное число.
- * @return {array} numericArray - числовой массив от min до max (включительно).
+ * @return {array} range - числовой массив от min до max (включительно).
  */
-var rangeNumericArray = function (min, max, step) {
-  var numericArray = [];
+var generateRange = function (min, max, step) {
+  var range = [];
   for (var i = min; i <= max; i += step) {
-    numericArray.push(i);
+    range.push(i);
   }
-  return numericArray;
+  return range;
 };
 
 /**
@@ -43,9 +43,9 @@ var randomizeArray = function (arr) {
 };
 
 
-var urlNumbers = rangeNumericArray(1, 25, 1);
+var urlNumbers = generateRange(1, 25, 1);
 var randomUrlNumbers = randomizeArray(urlNumbers);
-var likes = rangeNumericArray(15, 200, 1);
+var likes = generateRange(15, 200, 1);
 
 /**
  * Выдает случайный элемент из массива. Допустимы повторы.
