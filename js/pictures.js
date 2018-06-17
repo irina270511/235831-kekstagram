@@ -10,22 +10,23 @@ var COMMENTS_QUANTITY = 2;
 var AVATAR_QUANTITY = 6;
 
 /**
- * Создает числовой массив от min до max (включительно) по возрастанию с шагом 1.
+ * Создает числовой массив от min до max (включительно) по возрастанию с шагом step.
  *
  * @param {number} min - минимальное число массива. Любое число, может быть отрицательным и/или дробным.
  * @param {number} max - максимальное число массива. Любое число, может быть отрицательным и/или дробным. Должно быть больше или равно минимальному числу массива.
+ * @param {number} step - шаг массива. Положительное число.
  * @return {array} numericArray - числовой массив от min до max (включительно).
  */
-var createNumericArray = function (min, max) {
+var rangeNumericArray = function (min, max, step) {
   var numericArray = [];
-  for (var i = min; i <= max; i++) {
+  for (var i = min; i <= max; i += step) {
     numericArray.push(i);
   }
   return numericArray;
 };
 
 /**
- * Перемешивает массив случайным образом.
+ * Перемешивает массив случайным образом (алгоритм Фишера-Йетса).
  *
  * @param {array} arr - любой массив элементов.
  * @return {array} newArr - новый массив из тех же элементов в случайном порядке.
@@ -41,6 +42,11 @@ var randomizeArray = function (arr) {
   return newArr;
 };
 
+
+var urlNumbers = rangeNumericArray(1, 25, 1);
+var randomUrlNumbers = randomizeArray(urlNumbers);
+var likes = rangeNumericArray(15, 200, 1);
+
 /**
  * Выдает случайный элемент из массива. Допустимы повторы.
  *
@@ -54,7 +60,7 @@ var getRandomElement = function (arr) {
 };
 
 /**
- * Генерирует список любой длины из возможных комментариев (COMMENTS).
+ * Генерирует массив заданной длины из возможных комментариев (COMMENTS).
  *
  * @param {number} quantity - количество комментариев.
  * @return {array} commentsList - массив из комментариев.
@@ -70,9 +76,9 @@ var generateCommentsList = function (quantity) {
 };
 
 /**
- * Создает массив картинок любой длины. Параметры картинок: уникальный адрес, случайное количество лайков, случайный список комментариев и случайное описание.
+ * Создает массив картинок заданной длины. Параметры картинок: уникальный адрес, случайное количество лайков, случайный список комментариев и случайное описание.
  *
- * @param {number} picturesQuantity - количество картинок.
+ * @param {number} picturesQuantity - количество картинок (длина массива).
  * @return {array} pictures - массив картинок.
  */
 var getPictures = function (picturesQuantity) {
@@ -87,18 +93,6 @@ var getPictures = function (picturesQuantity) {
     pictures.push(photo);
   }
   return pictures;
-};
-
-/**
- * Удаляет на странице массив ненужных DOM-элементов.
- *
- * @param {array}  unusefulElements - массив ненужных элементов.
- * @param {object} place - место в DOM-дереве для удаления элементов.
- */
-var removeElements = function (unusefulElements, place) {
-  for (var i = 0; i < unusefulElements.length; i++) {
-    place.removeChild(unusefulElements[i]);
-  }
 };
 
 /**
@@ -123,35 +117,51 @@ var renderPreviewPicture = function (picture) {
   return pictureElement;
 };
 
+
 /**
- * Создает фрагмент DOM-дерева (лист комментариев) на основе данных массива.
+ * Создает DOM-элемент на основе шаблона, комментарий к картинке.
  *
- * @param {array} comments - массив комментариев.
- * @return {object} fragment - фрагмент DOM-дерева - лист комментариев.
+ * @param {string} comment - текст комментария.
+ * @return {object} commentElement - DOM-элемент на основе шаблона, комментарий к картинке.
  */
-var renderCommentsList = function (comments) {
-  var fragment = document.createDocumentFragment();
-  for (var i = 0; i < comments.length; i++) {
-    var newElement = document.createElement('li');
-    newElement.className = 'social__comment social__comment--text';
-    newElement.innerHTML = '<img class="social__picture" src="img/avatar-' + Math.ceil(Math.random() * AVATAR_QUANTITY) + '.svg" alt="Аватар комментатора фотографии" width="35" height="35"> <p class="social__text">' + comments[i] + '</p>';
-    fragment.appendChild(newElement);
-  }
-  return fragment;
+var renderComment = function (comment) {
+  var pictureTemplate = document.querySelector('#picture')
+    .content
+    .querySelector('.social__comment');
+  var commentElement = pictureTemplate.cloneNode(true);
+
+  commentElement.querySelector('.social__picture').src = 'img/avatar-' + Math.ceil(Math.random() * AVATAR_QUANTITY) + '.svg';
+  commentElement.querySelector('.social__text').textContent = comment;
+
+  return commentElement;
 };
 
 /**
- * Отрисовывает на странице картинки (DOM-элементы) на основе данных массива.
+ * Отрисовывает на странице комментарии (DOM-элементы) на основе данных массива.
+ *
+ * @param {array} comments - массив комментариев.
+ * @param {object} appendTo - место в DOM-дереве для добавления элементов.
+ */
+var renderCommentsList = function (comments, appendTo) {
+  var fragment = document.createDocumentFragment();
+  for (var i = 0; i < comments.length; i++) {
+    fragment.appendChild(renderComment(comments[i]));
+  }
+  appendTo.appendChild(fragment);
+};
+
+/**
+ * Отрисовывает на странице картинки (DOM-элементы) на основе данных массива картинок.
  *
  * @param {array} pictures - массив картинок.
- * @param {object} place - место в DOM-дереве для добавления элементов.
+ * @param {object} appendTo - место в DOM-дереве для добавления элементов.
  */
-var drawPreviewPictures = function (pictures, place) {
+var renderPreviewPicturesList = function (pictures, appendTo) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < pictures.length; i++) {
     fragment.appendChild(renderPreviewPicture(pictures[i]));
   }
-  place.appendChild(fragment);
+  appendTo.appendChild(fragment);
 };
 
 /**
@@ -163,17 +173,13 @@ var drawPreviewPictures = function (pictures, place) {
  * @param {array} picture.comments - массив с комментариями к картинке.
  * @param {string} picture.description - описание к картинке.
  */
-var drawBigPicture = function (picture) {
+var renderBigPicture = function (picture) {
   // Показываем страницу с картинкой в полном размере
   var bigPicture = document.querySelector('.big-picture');
   bigPicture.classList.remove('hidden');
-  // Удаляем имеющиеся комментарии
-  var unusefulSocialComments = bigPicture.querySelectorAll('.social__comment');
+  // Рендерим и вставляем лист с комментариями
   var socialComments = bigPicture.querySelector('.social__comments');
-  removeElements(unusefulSocialComments, socialComments);
-  // Рендерим и вставляем новый лист с комментариями
-  var pictureComments = renderCommentsList(picture.comments);
-  socialComments.appendChild(pictureComments);
+  var pictureComments = renderCommentsList(picture.comments, socialComments);
   // Вставляем остальные параметры картинки
   bigPicture.querySelector('.big-picture__img > img').src = picture.url;
   bigPicture.querySelector('.likes-count').textContent = picture.likes;
@@ -181,15 +187,11 @@ var drawBigPicture = function (picture) {
   bigPicture.querySelector('.social__caption').textContent = picture.description;
 };
 
-var urlNumbers = createNumericArray(1, 25);
-var randomUrlNumbers = randomizeArray(urlNumbers);
-var likes = createNumericArray(15, 200);
 var pictures = getPictures(25);
-
 var place = document.querySelector('.pictures');
-drawPreviewPictures(pictures, place);
+renderPreviewPicturesList(pictures, place);
 
-drawBigPicture(pictures[0]);
+renderBigPicture(pictures[0]);
 
 document.querySelector('.social__comment-count')
         .classList
