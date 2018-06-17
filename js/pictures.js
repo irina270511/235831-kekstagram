@@ -179,7 +179,7 @@ var renderBigPicture = function (picture) {
   bigPicture.classList.remove('hidden');
   // Рендерим и вставляем лист с комментариями
   var socialComments = bigPicture.querySelector('.social__comments');
-  var pictureComments = renderCommentsList(picture.comments, socialComments);
+  renderCommentsList(picture.comments, socialComments);
   // Вставляем остальные параметры картинки
   bigPicture.querySelector('.big-picture__img > img').src = picture.url;
   bigPicture.querySelector('.likes-count').textContent = picture.likes;
