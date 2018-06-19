@@ -41,12 +41,12 @@ var effects = {
     imgClass: 'effects__preview--marvin',
     filter: 'filter: invert(' + effectNumber + '%);'
   },
-  phobos : {
+  phobos: {
     effectId: 'effect-phobos',
     imgClass: 'effects__preview--phobos',
     filter: 'filter: blur(' + effectNumber + 'px);'
   },
-  heat : {
+  heat: {
     effectId: 'effect-heat',
     imgClass: 'effects__preview--heat',
     filter: 'filter: brightness(' + effectNumber + ');'
@@ -266,8 +266,8 @@ var pictureLinks = document.querySelectorAll('.picture__link');
 for (var i = 0; i < pictureLinks.length; i++) {
   pictureLinks[i].addEventListener('click', function (evt) {
     findPictureNumber(evt.target.src);
-  })
-};
+  });
+}
 
 /**
  * Удаляет всех потомков переданного DOM-элемента
@@ -276,7 +276,7 @@ for (var i = 0; i < pictureLinks.length; i++) {
  */
 var removeAllChildren = function (element) {
   var childList = element.childNodes;
-  for (var i = 0; i < childList.length; i++) {
+  for (i = 0; i < childList.length; i++) {
     element.removeChild(childList[i]);
   }
 };
@@ -374,7 +374,7 @@ var changeSizeValueInput = function (sizeValue) {
  */
 var changeUploadPreviewStyle = function (sizeValue) {
   var valueForTransform = sizeValue / 100;
-  uploadPreviewImg.style = "transform: scale(" + valueForTransform + ")";
+  uploadPreviewImg.style = 'transform: scale(' + valueForTransform + ')';
 };
 
 /**
@@ -383,7 +383,7 @@ var changeUploadPreviewStyle = function (sizeValue) {
  * @param {number} sizeStep - переданный шаг изменения размера.
  */
 var resizeValue = function (sizeStep) {
-  var pictureSize = + (sizeValueInput.value).replace('%', '');
+  var pictureSize = +(sizeValueInput.value).replace('%', '');
   if ((sizeStep > 0 && pictureSize < MAX_SIZE) || (sizeStep < 0 && pictureSize > MIN_SIZE)) {
     var newPictureSize = pictureSize + sizeStep;
     changeSizeValueInput(newPictureSize);
@@ -440,13 +440,13 @@ var changeEffect = function (id) {
   // uploadPreviewImg.classList.remove('effects__preview--none', 'effects__preview--chrome', 'effects__preview--sepia', 'effects__preview--marvin', 'effects__preview--phobos', 'effects__preview--heat');
   // ВТОРОЙ СПОСОБ - вынесение отдельной функции - удалить все классы кроме 'img-upload__preview' (или можно вообще удалять все классы, а этот каждый раз добавлять заново)
   // var clearClassList = function (element) {
-    // var elementClassList = element.classList;
-    //   for (var i = 0; i < elementClassList.length; i++) {
-    //     if (elementClassList[i] !== 'img-upload__preview'){
-    //       element.classList.remove(elementClassList[i]);
-    //     }
-    //   }
-    // };
+  //   var elementClassList = element.classList;
+  //   for (var i = 0; i < elementClassList.length; i++) {
+  //     if (elementClassList[i] !== 'img-upload__preview'){
+  //       element.classList.remove(elementClassList[i]);
+  //     }
+  //   }
+  // };
   // clearClassList(uploadPreviewImg);
   // ТРЕТИЙ СПОСОБ
   uploadPreviewImg.classList.remove(uploadPreviewImg.classList[1]);
@@ -491,7 +491,7 @@ var changeEffectFilter = function (level, id) {
     effectNumber = level * 3 / 100;
     uploadPreviewImg.style = effects.phobos.filter;
   } else if (id === effects.heat.effectId) {
-    effectNumber = (level * 2/ 100) + 1;
+    effectNumber = (level * 2 / 100) + 1;
     uploadPreviewImg.style = effects.heat.filter;
   }
 };
