@@ -8,6 +8,73 @@ var DESCRIPTION = ['Тестим новую камеру!', 'Затусили с
 var COMMENTS_QUANTITY = 2;
 // Количество доступных аватаров для комментаторов
 var AVATAR_QUANTITY = 6;
+// Клавиатурные коды
+var ESC_KEYCODE = 27;
+var ENTER_KEYCODE = 13;
+// Размеры загружаемых фотографий (в %)
+var MAX_SIZE = 100;
+var MIN_SIZE = 25;
+// Шаг изменения размера загружаемых фотографий (в %)
+var MINUS_SIZE_STEP = -25;
+var PLUS_SIZE_STEP = 25;
+// Максимальная координата (по оси Х) шкалы изменения глубины эффекта фотографии
+var MAX_COORDINATE_X = 100;
+// Эффекты, применимые к загружаемым фотографиям
+var effectNumber = 1;
+var effects = {
+  original: {
+    effectId: 'effect-none',
+    imgClass: 'effects__preview--none'
+  },
+  chrome: {
+    effectId: 'effect-chrome',
+    imgClass: 'effects__preview--chrome',
+    filter: 'filter: grayscale(' + effectNumber + ');'
+  },
+  sepia: {
+    effectId: 'effect-sepia',
+    imgClass: 'effects__preview--sepia',
+    filter: 'filter: sepia(' + effectNumber + ');'
+  },
+  marvin: {
+    effectId: 'effect-marvin',
+    imgClass: 'effects__preview--marvin',
+    filter: 'filter: invert(' + effectNumber + '%);'
+  },
+  phobos : {
+    effectId: 'effect-phobos',
+    imgClass: 'effects__preview--phobos',
+    filter: 'filter: blur(' + effectNumber + 'px);'
+  },
+  heat : {
+    effectId: 'effect-heat',
+    imgClass: 'effects__preview--heat',
+    filter: 'filter: brightness(' + effectNumber + ');'
+  }
+};
+
+// DOM-элементы
+var bigPictureOverlay = document.querySelector('.big-picture');
+var bigPictureOverlayCloseButton = document.querySelector('#picture-cancel');
+
+var socialCommentsUl = document.querySelector('.social__comments');
+
+var uploadStartButton = document.querySelector('#upload-file');
+var uploadPreviewImg = document.querySelector('.img-upload__preview');
+var uploadOverlay = document.querySelector('.img-upload__overlay');
+var uploadOverlayCloseButton = document.querySelector('#upload-cancel');
+
+var sizeMinusButton = document.querySelector('.resize__control--minus');
+var sizePlusButton = document.querySelector('.resize__control--plus');
+var sizeValueInput = document.querySelector('.resize__control--value');
+
+var uploadScaleImg = document.querySelector('.img-upload__scale');
+var scaleValueInput = document.querySelector('.scale__value');
+var scalePin = document.querySelector('.scale__pin');
+
+var effectsListUl = document.querySelector('.effects__list');
+
+var picturesSection = document.querySelector('.pictures');
 
 /**
  * Создает числовой массив от min до max (включительно) по возрастанию с шагом step.
@@ -24,6 +91,9 @@ var generateRange = function (min, max, step) {
   }
   return range;
 };
+
+var likes = generateRange(15, 200, 1);
+var urlNumbers = generateRange(1, 25, 1);
 
 /**
  * Перемешивает массив случайным образом (алгоритм Фишера-Йетса).
@@ -42,10 +112,7 @@ var randomizeArray = function (arr) {
   return newArr;
 };
 
-
-var urlNumbers = generateRange(1, 25, 1);
 var randomUrlNumbers = randomizeArray(urlNumbers);
-var likes = generateRange(15, 200, 1);
 
 /**
  * Выдает случайный элемент из массива. Допустимы повторы.
@@ -95,6 +162,8 @@ var getPictures = function (picturesQuantity) {
   return pictures;
 };
 
+var pictures = getPictures(25);
+
 /**
  * Создает DOM-элемент на основе шаблона, превью картинки на главной странице.
  *
@@ -117,7 +186,6 @@ var renderPreviewPicture = function (picture) {
   return pictureElement;
 };
 
-
 /**
  * Создает DOM-элемент на основе шаблона, комментарий к картинке.
  *
@@ -136,7 +204,6 @@ var renderComment = function (comment) {
   return commentElement;
 };
 
-
 /**
  * Добавляет на страницу DOM-элементы на основе данных массива.
  *
@@ -152,6 +219,11 @@ var renderElements = function (elements, appendTo, renderFunction) {
   appendTo.appendChild(fragment);
 };
 
+renderElements(pictures, picturesSection, renderPreviewPicture);
+
+
+// КАРТИНКА В ПОЛНОМ РАЗМЕРЕ
+
 /**
  * Отрисовывает страницу с картинкой в полном размере.
  *
@@ -163,24 +235,71 @@ var renderElements = function (elements, appendTo, renderFunction) {
  */
 var renderBigPicture = function (picture) {
   // Показываем страницу с картинкой в полном размере
-  var bigPicture = document.querySelector('.big-picture');
-  bigPicture.classList.remove('hidden');
+  bigPictureOverlay.classList.remove('hidden');
   // Рендерим и вставляем лист с комментариями
-  var placeForComments = bigPicture.querySelector('.social__comments');
-  renderElements(picture.comments, placeForComments, renderComment);
+  renderElements(picture.comments, socialCommentsUl, renderComment);
   // Вставляем остальные параметры картинки
-  bigPicture.querySelector('.big-picture__img > img').src = picture.url;
-  bigPicture.querySelector('.likes-count').textContent = picture.likes;
-  bigPicture.querySelector('.comments-count').textContent = picture.comments.length;
-  bigPicture.querySelector('.social__caption').textContent = picture.description;
+  bigPictureOverlay.querySelector('.big-picture__img > img').src = picture.url;
+  bigPictureOverlay.querySelector('.likes-count').textContent = picture.likes;
+  bigPictureOverlay.querySelector('.comments-count').textContent = picture.comments.length;
+  bigPictureOverlay.querySelector('.social__caption').textContent = picture.description;
 };
 
-var pictures = getPictures(25);
-var placeForPictures = document.querySelector('.pictures');
-renderElements(pictures, placeForPictures, renderPreviewPicture);
+/**
+ * Находит порядковый номер выбранной картинки в массиве картинок (pictures), при помощи сравнения путей к каждой картинке и пути к выбранному элементу.
+ * Если пути совпадают - вызывается функция отрисовки картинки в полном размере.
+ *
+ * @param {string} src - путь к выбранному элементу.
+ */
+var findPictureNumber = function (src) {
+  var startPos = src.indexOf('photos');
+  var pictureUrl = src.slice(startPos);
+  for (var i = 0; i < pictures.length; i++) {
+    if (pictures[i].url === pictureUrl) {
+      renderBigPicture(pictures[i]);
+    }
+  }
+};
 
-renderBigPicture(pictures[0]);
+var pictureLinks = document.querySelectorAll('.picture__link');
 
+for (var i = 0; i < pictureLinks.length; i++) {
+  pictureLinks[i].addEventListener('click', function (evt) {
+    findPictureNumber(evt.target.src);
+  })
+};
+
+/**
+ * Удаляет всех потомков переданного DOM-элемента
+ *
+ * @param {object} element - DOM-элемент, потомков которого следует удалить.
+ */
+var removeAllChildren = function (element) {
+  var childList = element.childNodes;
+  for (var i = 0; i < childList.length; i++) {
+    element.removeChild(childList[i]);
+  }
+};
+
+/**
+ * Закрывает окно с картинкой в полном размере, перед этим удаляя все комментарии под картинкой.
+ */
+var closeBigPictureOverlay = function () {
+  removeAllChildren(socialCommentsUl);
+  bigPictureOverlay.classList.add('hidden');
+};
+
+bigPictureOverlayCloseButton.addEventListener('click', function () {
+  closeBigPictureOverlay();
+});
+
+bigPictureOverlayCloseButton.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    closeBigPictureOverlay();
+  }
+});
+
+// Временно спрятанные счетчик комментариев и кнопка дальнейшей загрузки комментариев
 document.querySelector('.social__comment-count')
   .classList
   .add('visually-hidden');
@@ -188,3 +307,208 @@ document.querySelector('.social__comment-count')
 document.querySelector('.social__loadmore')
   .classList
   .add('visually-hidden');
+
+
+// ЗАГРУЗКА КАРТИНОК
+
+/**
+ * Закрывает окно загрузки картинок по нажатию ESC.
+ *
+ * @param {object} evt - объект event.
+ */
+var escUploadPressHandler = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    uploadOverlay.classList.add('hidden');
+    uploadStartButton.value = '';
+  }
+};
+
+/**
+ * Открывает окно загрузки фотографий.
+ */
+var openUploadOverlay = function () {
+  uploadOverlay.classList.remove('hidden');
+  document.addEventListener('keydown', escUploadPressHandler);
+};
+
+/**
+ * Закрывает окно загрузки фотографий.
+ */
+var closeUploadOverlay = function () {
+  uploadOverlay.classList.add('hidden');
+  uploadStartButton.value = '';
+  document.removeEventListener('keydown', escUploadPressHandler);
+
+};
+
+uploadStartButton.addEventListener('change', function () {
+  openUploadOverlay();
+});
+
+uploadOverlayCloseButton.addEventListener('click', function () {
+  closeUploadOverlay();
+});
+
+uploadOverlayCloseButton.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    closeUploadOverlay();
+  }
+});
+
+
+// ИЗМЕНЕНИЕ РАЗМЕРА КАРТИНКИ
+
+/**
+ * Меняет значение поля изменения размера картинки (.resize__control--value).
+ *
+ * @param {number} sizeValue - переданный размер картинки.
+ */
+var changeSizeValueInput = function (sizeValue) {
+  sizeValueInput.value = sizeValue + '%';
+};
+
+/**
+ * Меняет размер превью картинки на переданное значение.
+ *
+ * @param {number} sizeValue - переданный размер картинки.
+ */
+var changeUploadPreviewStyle = function (sizeValue) {
+  var valueForTransform = sizeValue / 100;
+  uploadPreviewImg.style = "transform: scale(" + valueForTransform + ")";
+};
+
+/**
+ * Вычисляет новый размер картинки, вызывает функции изменения размера картинки.
+ *
+ * @param {number} sizeStep - переданный шаг изменения размера.
+ */
+var resizeValue = function (sizeStep) {
+  var pictureSize = + (sizeValueInput.value).replace('%', '');
+  if ((sizeStep > 0 && pictureSize < MAX_SIZE) || (sizeStep < 0 && pictureSize > MIN_SIZE)) {
+    var newPictureSize = pictureSize + sizeStep;
+    changeSizeValueInput(newPictureSize);
+    changeUploadPreviewStyle(newPictureSize);
+  }
+};
+
+sizePlusButton.addEventListener('click', function () {
+  resizeValue(PLUS_SIZE_STEP);
+});
+
+sizeMinusButton.addEventListener('click', function () {
+  resizeValue(MINUS_SIZE_STEP);
+});
+
+
+// ИЗМЕНЕНИЕ ЭФФЕКТА КАРТИНКИ
+
+/**
+ * Проверяет id эффекта. Если эффект «Оригинал», то скрывает слайдер регулирования эффекта.
+ *
+ * @param {string} id - id применяемого эффекта.
+ */
+var checkEffect = function (id) {
+  if (id === effects.original.effectId) {
+    uploadScaleImg.classList.add('hidden');
+  } else {
+    uploadScaleImg.classList.remove('hidden');
+  }
+};
+
+/**
+ * Меняет эффект на превью картинки, основываясь на id выбранного эффекта. Предыдущий эффект удаляется.
+ *
+ * @param {string} id - id выбранного эффекта.
+ */
+var changeEffect = function (id) {
+  var newClass = effects.original.imgClass;
+  if (id === effects.chrome.effectId) {
+    newClass = effects.chrome.imgClass;
+  } else if (id === effects.sepia.effectId) {
+    newClass = effects.sepia.imgClass;
+  } else if (id === effects.marvin.effectId) {
+    newClass = effects.marvin.imgClass;
+  } else if (id === effects.phobos.effectId) {
+    newClass = effects.phobos.imgClass;
+  } else if (id === effects.heat.effectId) {
+    newClass = effects.heat.imgClass;
+  }
+
+  checkEffect(id);
+
+  // ПЕРВЫЙ СПОСОБ - удаление всех возможных классов
+  // uploadPreviewImg.classList.remove('effects__preview--none', 'effects__preview--chrome', 'effects__preview--sepia', 'effects__preview--marvin', 'effects__preview--phobos', 'effects__preview--heat');
+  // ВТОРОЙ СПОСОБ - вынесение отдельной функции - удалить все классы кроме 'img-upload__preview' (или можно вообще удалять все классы, а этот каждый раз добавлять заново)
+  // var clearClassList = function (element) {
+    // var elementClassList = element.classList;
+    //   for (var i = 0; i < elementClassList.length; i++) {
+    //     if (elementClassList[i] !== 'img-upload__preview'){
+    //       element.classList.remove(elementClassList[i]);
+    //     }
+    //   }
+    // };
+  // clearClassList(uploadPreviewImg);
+  // ТРЕТИЙ СПОСОБ
+  uploadPreviewImg.classList.remove(uploadPreviewImg.classList[1]);
+  uploadPreviewImg.classList.add(newClass);
+};
+
+// почему здесь обработчик срабатывает только на элемент, изначально выбранный в разметке?
+// var checkedInput = effectsListUl.querySelector('input:checked');
+// checkedInput.addEventListener('click', function (evt) {
+//   changeEffect(evt.target.id);
+// });
+effectsListUl.addEventListener('change', function (evt) {
+  changeEffect(evt.target.id);
+});
+
+
+// ПЕРЕТАСКИВАНИЕ СЛАЙДЕРА
+
+/**
+ * Меняет уровень эффекта пропорционально, в зависимости от id эффекта.
+ * Для эффекта «Хром» — filter: grayscale(0..1);
+ * Для эффекта «Сепия» — filter: sepia(0..1);
+ * Для эффекта «Марвин» — filter: invert(0..100%);
+ * Для эффекта «Фобос» — filter: blur(0..3px);
+ * Для эффекта «Зной» — filter: brightness(1..3).
+ *
+ * @param {number} level -  выставленный уровень применяемого эффекта.
+ * @param {string} id - id применяемого эффекта.
+ */
+var changeEffectFilter = function (level, id) {
+  scaleValueInput.value = level;
+  if (id === effects.chrome.effectId) {
+    effectNumber = level / 100;
+    uploadPreviewImg.style = effects.chrome.filter;
+  } else if (id === effects.sepia.effectId) {
+    effectNumber = level / 100;
+    uploadPreviewImg.style = effects.sepia.filter;
+  } else if (id === effects.marvin.effectId) {
+    effectNumber = level;
+    uploadPreviewImg.style = effects.marvin.filter;
+  } else if (id === effects.phobos.effectId) {
+    effectNumber = level * 3 / 100;
+    uploadPreviewImg.style = effects.phobos.filter;
+  } else if (id === effects.heat.effectId) {
+    effectNumber = (level * 2/ 100) + 1;
+    uploadPreviewImg.style = effects.heat.filter;
+  }
+};
+
+/**
+ * Вычисляет уровень эффекта, основываясь на изменении координаты по оси Х у слайдера.
+ *
+ * @param {number} coordinateX - актуальная координата пина слайдера.
+ * @param {string} id - id применяемого эффекта.
+ */
+var moveScalePin = function (coordinateX, id) {
+  var level = Math.round(coordinateX) * 100 / MAX_COORDINATE_X;
+  changeEffectFilter(level, id);
+};
+
+scalePin.addEventListener('mouseup', function (evt) {
+  moveScalePin(evt.clientX, evt.target.id);
+});
+
+
