@@ -19,39 +19,6 @@ var MINUS_SIZE_STEP = -25;
 var PLUS_SIZE_STEP = 25;
 // Максимальная координата (по оси Х) шкалы изменения глубины эффекта фотографии
 var MAX_COORDINATE_X = 100;
-// Эффекты, применимые к загружаемым фотографиям
-var effectNumber = 1;
-var effects = {
-  original: {
-    effectId: 'effect-none',
-    imgClass: 'effects__preview--none'
-  },
-  chrome: {
-    effectId: 'effect-chrome',
-    imgClass: 'effects__preview--chrome',
-    filter: 'filter: grayscale(' + effectNumber + ');'
-  },
-  sepia: {
-    effectId: 'effect-sepia',
-    imgClass: 'effects__preview--sepia',
-    filter: 'filter: sepia(' + effectNumber + ');'
-  },
-  marvin: {
-    effectId: 'effect-marvin',
-    imgClass: 'effects__preview--marvin',
-    filter: 'filter: invert(' + effectNumber + '%);'
-  },
-  phobos: {
-    effectId: 'effect-phobos',
-    imgClass: 'effects__preview--phobos',
-    filter: 'filter: blur(' + effectNumber + 'px);'
-  },
-  heat: {
-    effectId: 'effect-heat',
-    imgClass: 'effects__preview--heat',
-    filter: 'filter: brightness(' + effectNumber + ');'
-  }
-};
 
 // DOM-элементы
 var bigPictureOverlay = document.querySelector('.big-picture');
@@ -70,7 +37,9 @@ var sizeValueInput = document.querySelector('.resize__control--value');
 
 var uploadScaleImg = document.querySelector('.img-upload__scale');
 var scaleValueInput = document.querySelector('.scale__value');
+var scaleLevel = document.querySelector('.scale__level');
 var scalePin = document.querySelector('.scale__pin');
+var scaleLine = document.querySelector('.scale__line');
 
 var effectsListUl = document.querySelector('.effects__list');
 
@@ -152,6 +121,7 @@ var getPictures = function (picturesQuantity) {
   var pictures = [];
   for (var i = 0; i < picturesQuantity; i++) {
     var photo = {
+      id: 'picture_link_' + i,
       url: 'photos/' + randomUrlNumbers[i] + '.jpg',
       likes: getRandomElement(likes),
       comments: generateCommentsList(COMMENTS_QUANTITY),
@@ -179,6 +149,7 @@ var renderPreviewPicture = function (picture) {
     .querySelector('.picture__link');
   var pictureElement = pictureTemplate.cloneNode(true);
 
+  pictureElement.id = picture.id;
   pictureElement.querySelector('.picture__img').src = picture.url;
   pictureElement.querySelector('.picture__stat--likes').textContent = picture.likes;
   pictureElement.querySelector('.picture__stat--comments').textContent = picture.comments.length;
@@ -219,8 +190,6 @@ var renderElements = function (elements, appendTo, renderFunction) {
   appendTo.appendChild(fragment);
 };
 
-renderElements(pictures, picturesSection, renderPreviewPicture);
-
 
 // КАРТИНКА В ПОЛНОМ РАЗМЕРЕ
 
@@ -236,6 +205,7 @@ renderElements(pictures, picturesSection, renderPreviewPicture);
 var renderBigPicture = function (picture) {
   // Показываем страницу с картинкой в полном размере
   bigPictureOverlay.classList.remove('hidden');
+  document.addEventListener('click', overlayBigPictureClickHandler);
   // Рендерим и вставляем лист с комментариями
   renderElements(picture.comments, socialCommentsUl, renderComment);
   // Вставляем остальные параметры картинки
@@ -246,28 +216,19 @@ var renderBigPicture = function (picture) {
 };
 
 /**
- * Находит порядковый номер выбранной картинки в массиве картинок (pictures), при помощи сравнения путей к каждой картинке и пути к выбранному элементу.
- * Если пути совпадают - вызывается функция отрисовки картинки в полном размере.
+ * Находит по переданному событию порядковый номер выбранной картинки в массиве картинок (pictures) и вызывает функцию отрисовки.
  *
- * @param {string} src - путь к выбранному элементу.
+ * @param {object} evt - объект event.
  */
-var findPictureNumber = function (src) {
-  var startPos = src.indexOf('photos');
-  var pictureUrl = src.slice(startPos);
-  for (var i = 0; i < pictures.length; i++) {
-    if (pictures[i].url === pictureUrl) {
-      renderBigPicture(pictures[i]);
+var findPicture = function (evt) {
+  if (evt.target.parentNode.className === 'picture__link') {
+    for (var i = 0; i < pictures.length; i++) {
+      if (pictures[i].id === evt.target.parentNode.id) {
+        renderBigPicture(pictures[i]);
+      }
     }
   }
 };
-
-var pictureLinks = document.querySelectorAll('.picture__link');
-
-for (var i = 0; i < pictureLinks.length; i++) {
-  pictureLinks[i].addEventListener('click', function (evt) {
-    findPictureNumber(evt.target.src);
-  });
-}
 
 /**
  * Удаляет всех потомков переданного DOM-элемента
@@ -276,8 +237,18 @@ for (var i = 0; i < pictureLinks.length; i++) {
  */
 var removeAllChildren = function (element) {
   var childList = element.childNodes;
-  for (i = 0; i < childList.length; i++) {
+  for (var i = 0; i < childList.length; i++) {
     element.removeChild(childList[i]);
+  }
+};
+/**
+ * Вызывает закрытие окна в полном размере при клике на поле overlayBigPicture, вне поля окна с картинкой
+ *
+ * @param {object} evt - объект event.
+ */
+var overlayBigPictureClickHandler = function (evt) {
+  if (evt.target === bigPictureOverlay) {
+    closeBigPictureOverlay();
   }
 };
 
@@ -287,26 +258,8 @@ var removeAllChildren = function (element) {
 var closeBigPictureOverlay = function () {
   removeAllChildren(socialCommentsUl);
   bigPictureOverlay.classList.add('hidden');
+  document.removeEventListener('click', overlayBigPictureClickHandler);
 };
-
-bigPictureOverlayCloseButton.addEventListener('click', function () {
-  closeBigPictureOverlay();
-});
-
-bigPictureOverlayCloseButton.addEventListener('keydown', function (evt) {
-  if (evt.keyCode === ENTER_KEYCODE) {
-    closeBigPictureOverlay();
-  }
-});
-
-// Временно спрятанные счетчик комментариев и кнопка дальнейшей загрузки комментариев
-document.querySelector('.social__comment-count')
-  .classList
-  .add('visually-hidden');
-
-document.querySelector('.social__loadmore')
-  .classList
-  .add('visually-hidden');
 
 
 // ЗАГРУЗКА КАРТИНОК
@@ -318,8 +271,18 @@ document.querySelector('.social__loadmore')
  */
 var escUploadPressHandler = function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
-    uploadOverlay.classList.add('hidden');
-    uploadStartButton.value = '';
+    closeUploadOverlay();
+  }
+};
+
+/**
+ * Вызывает закрытие окна загрузки при клике на поле overlayUpload, вне поля окна загрузки
+ *
+ * @param {object} evt - объект event.
+ */
+var overlayUploadClickHandler = function (evt) {
+  if (evt.target === uploadOverlay) {
+    closeUploadOverlay();
   }
 };
 
@@ -329,6 +292,7 @@ var escUploadPressHandler = function (evt) {
 var openUploadOverlay = function () {
   uploadOverlay.classList.remove('hidden');
   document.addEventListener('keydown', escUploadPressHandler);
+  document.addEventListener('click', overlayUploadClickHandler);
 };
 
 /**
@@ -338,22 +302,10 @@ var closeUploadOverlay = function () {
   uploadOverlay.classList.add('hidden');
   uploadStartButton.value = '';
   document.removeEventListener('keydown', escUploadPressHandler);
+  document.removeEventListener('click', overlayUploadClickHandler);
 
 };
 
-uploadStartButton.addEventListener('change', function () {
-  openUploadOverlay();
-});
-
-uploadOverlayCloseButton.addEventListener('click', function () {
-  closeUploadOverlay();
-});
-
-uploadOverlayCloseButton.addEventListener('keydown', function (evt) {
-  if (evt.keyCode === ENTER_KEYCODE) {
-    closeUploadOverlay();
-  }
-});
 
 
 // ИЗМЕНЕНИЕ РАЗМЕРА КАРТИНКИ
@@ -391,16 +343,23 @@ var resizeValue = function (sizeStep) {
   }
 };
 
-sizePlusButton.addEventListener('click', function () {
-  resizeValue(PLUS_SIZE_STEP);
-});
-
-sizeMinusButton.addEventListener('click', function () {
-  resizeValue(MINUS_SIZE_STEP);
-});
-
 
 // ИЗМЕНЕНИЕ ЭФФЕКТА КАРТИНКИ
+
+/**
+ * Находит координаты линии слайдера.
+ *
+ * @return {object} coords - координаты линии слайдера.
+ */
+var findScaleCoords = function () {
+  var scaleCoords = scaleLine.getBoundingClientRect();
+  var coords = {
+    start: scaleCoords.x,
+    width: scaleCoords.width,
+    fin: scaleCoords.x + scaleCoords.width
+  }
+  return coords;
+};
 
 /**
  * Проверяет id эффекта. Если эффект «Оригинал», то скрывает слайдер регулирования эффекта.
@@ -408,7 +367,7 @@ sizeMinusButton.addEventListener('click', function () {
  * @param {string} id - id применяемого эффекта.
  */
 var checkEffect = function (id) {
-  if (id === effects.original.effectId) {
+  if (id === 'effect-none') {
     uploadScaleImg.classList.add('hidden');
   } else {
     uploadScaleImg.classList.remove('hidden');
@@ -416,57 +375,73 @@ var checkEffect = function (id) {
 };
 
 /**
- * Меняет эффект на превью картинки, основываясь на id выбранного эффекта. Предыдущий эффект удаляется.
+ * Возвращает по id эффекта соответстующий класс, который нужно добавить картинке. При передаче неизвестного аргумента вернет undefined.
+ *
+ * @param {string} id - id применяемого эффекта.
+ */
+var returnClassEffect = function (id) {
+  var classes = {
+    'effect-none': 'effects__preview--none',
+    'effect-chrome': 'effects__preview--chrome',
+    'effect-sepia': 'effects__preview--sepia',
+    'effect-marvin': 'effects__preview--marvin',
+    'effect-phobos': 'effects__preview--phobos',
+    'effect-heat': 'effects__preview--heat'
+  };
+  return classes[id];
+};
+
+/**
+ * Удаляет все классы у переданного элемента, кроме класса 'img-upload__preview'.
+ *
+ * @param {object} element - DOM-элемент у которого необходимо удалить все классы.
+ */
+var clearClassList = function (element) {
+  var elementClassList = element.classList;
+  for (var i = 0; i < elementClassList.length; i++) {
+    if (elementClassList[i] !== 'img-upload__preview') {
+      element.classList.remove(elementClassList[i]);
+    }
+  }
+};
+
+/**
+ * Отображает перемещение пина и уровня слайдера. Вызывает функцию смены глубины эффекта.
+ *
+ * @param {number} coordinateX - актуальная координата пина слайдера.
+ * @param {object} scaleCoords - координаты линии (возможных положений) слайдера.
+ */
+var moveScalePin = function (coordinateX, scaleCoords) {
+  if (coordinateX >= scaleCoords.start && coordinateX <= scaleCoords.fin) {
+    var shift = coordinateX - scaleCoords.start;
+    var level = shift / scaleCoords.width * 100;
+
+    scalePin.style.left = shift + 'px';
+    scaleLevel.style.width = level + '%';
+    changeEffectLevel(level);
+  }
+};
+
+
+/**
+ * Меняет эффект на превью картинки, добавляя ей необходимый класс. Основывается на id выбранного эффекта.
+ * Перед сменой эффекта обнуляет положение пина слайдера.
  *
  * @param {string} id - id выбранного эффекта.
  */
 var changeEffect = function (id) {
-  var newClass = effects.original.imgClass;
-  if (id === effects.chrome.effectId) {
-    newClass = effects.chrome.imgClass;
-  } else if (id === effects.sepia.effectId) {
-    newClass = effects.sepia.imgClass;
-  } else if (id === effects.marvin.effectId) {
-    newClass = effects.marvin.imgClass;
-  } else if (id === effects.phobos.effectId) {
-    newClass = effects.phobos.imgClass;
-  } else if (id === effects.heat.effectId) {
-    newClass = effects.heat.imgClass;
-  }
+  var scaleCoords = findScaleCoords();
+  moveScalePin(scaleCoords.start, scaleCoords);
 
+  var newClass = returnClassEffect(id);
   checkEffect(id);
-
-  // ПЕРВЫЙ СПОСОБ - удаление всех возможных классов
-  // uploadPreviewImg.classList.remove('effects__preview--none', 'effects__preview--chrome', 'effects__preview--sepia', 'effects__preview--marvin', 'effects__preview--phobos', 'effects__preview--heat');
-  // ВТОРОЙ СПОСОБ - вынесение отдельной функции - удалить все классы кроме 'img-upload__preview' (или можно вообще удалять все классы, а этот каждый раз добавлять заново)
-  // var clearClassList = function (element) {
-  //   var elementClassList = element.classList;
-  //   for (var i = 0; i < elementClassList.length; i++) {
-  //     if (elementClassList[i] !== 'img-upload__preview'){
-  //       element.classList.remove(elementClassList[i]);
-  //     }
-  //   }
-  // };
-  // clearClassList(uploadPreviewImg);
-  // ТРЕТИЙ СПОСОБ
-  uploadPreviewImg.classList.remove(uploadPreviewImg.classList[1]);
+  clearClassList(uploadPreviewImg);
   uploadPreviewImg.classList.add(newClass);
 };
 
-// почему здесь обработчик срабатывает только на элемент, изначально выбранный в разметке?
-// var checkedInput = effectsListUl.querySelector('input:checked');
-// checkedInput.addEventListener('click', function (evt) {
-//   changeEffect(evt.target.id);
-// });
-effectsListUl.addEventListener('change', function (evt) {
-  changeEffect(evt.target.id);
-});
-
-
-// ПЕРЕТАСКИВАНИЕ СЛАЙДЕРА
 
 /**
- * Меняет уровень эффекта пропорционально, в зависимости от id эффекта.
+ * Меняет уровень эффекта пропорционально, в зависимости от id выбранного эффекта.
  * Для эффекта «Хром» — filter: grayscale(0..1);
  * Для эффекта «Сепия» — filter: sepia(0..1);
  * Для эффекта «Марвин» — filter: invert(0..100%);
@@ -474,41 +449,85 @@ effectsListUl.addEventListener('change', function (evt) {
  * Для эффекта «Зной» — filter: brightness(1..3).
  *
  * @param {number} level -  выставленный уровень применяемого эффекта.
- * @param {string} id - id применяемого эффекта.
  */
-var changeEffectFilter = function (level, id) {
+
+var changeEffectLevel = function (level) {
+  var effectId = document.querySelector('input[name=effect]:checked').id;
   scaleValueInput.value = level;
-  if (id === effects.chrome.effectId) {
-    effectNumber = level / 100;
-    uploadPreviewImg.style = effects.chrome.filter;
-  } else if (id === effects.sepia.effectId) {
-    effectNumber = level / 100;
-    uploadPreviewImg.style = effects.sepia.filter;
-  } else if (id === effects.marvin.effectId) {
-    effectNumber = level;
-    uploadPreviewImg.style = effects.marvin.filter;
-  } else if (id === effects.phobos.effectId) {
-    effectNumber = level * 3 / 100;
-    uploadPreviewImg.style = effects.phobos.filter;
-  } else if (id === effects.heat.effectId) {
-    effectNumber = (level * 2 / 100) + 1;
-    uploadPreviewImg.style = effects.heat.filter;
-  }
+  var filterValue = {
+    'effect-chrome': 'filter: grayscale(' + level / 100 + ');',
+    'effect-sepia': 'filter: sepia(' + level / 100 + ');',
+    'effect-marvin': 'filter: invert(' + level + '%);',
+    'effect-phobos': 'filter: blur(' + level * 3 / 100 + 'px);',
+    'effect-heat': 'filter: brightness(' + (level * 2 / 100 + 1) + ');'
+  };
+
+  uploadPreviewImg.style = filterValue[effectId];
 };
 
-/**
- * Вычисляет уровень эффекта, основываясь на изменении координаты по оси Х у слайдера.
- *
- * @param {number} coordinateX - актуальная координата пина слайдера.
- * @param {string} id - id применяемого эффекта.
- */
-var moveScalePin = function (coordinateX, id) {
-  var level = Math.round(coordinateX) * 100 / MAX_COORDINATE_X;
-  changeEffectFilter(level, id);
-};
+// вызов функций
 
-scalePin.addEventListener('mouseup', function (evt) {
-  moveScalePin(evt.clientX, evt.target.id);
+renderElements(pictures, picturesSection, renderPreviewPicture);
+
+picturesSection.addEventListener('click', function(evt) {
+  findPicture(evt);
 });
 
 
+bigPictureOverlayCloseButton.addEventListener('click', function() {
+  closeBigPictureOverlay();
+});
+
+
+uploadStartButton.addEventListener('change', function() {
+  openUploadOverlay();
+});
+
+uploadOverlayCloseButton.addEventListener('click', function() {
+  closeUploadOverlay();
+});
+
+sizePlusButton.addEventListener('click', function() {
+  resizeValue(PLUS_SIZE_STEP);
+});
+
+sizeMinusButton.addEventListener('click', function() {
+  resizeValue(MINUS_SIZE_STEP);
+});
+
+
+effectsListUl.addEventListener('change', function(evt) {
+  changeEffect(evt.target.id);
+});
+
+scalePin.addEventListener('mousedown', function(evt) {
+  evt.preventDefault();
+  var coords = findScaleCoords();
+
+  var onMouseMove = function(moveEvt) {
+    moveEvt.preventDefault();
+    moveScalePin(moveEvt.clientX, coords);
+  };
+
+  var onMouseUp = function(upEvt) {
+    upEvt.preventDefault();
+
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+
+});
+
+
+
+// Временно спрятанные счетчик комментариев и кнопка дальнейшей загрузки комментариев
+document.querySelector('.social__comment-count')
+  .classList
+  .add('visually-hidden');
+
+document.querySelector('.social__loadmore')
+  .classList
+  .add('visually-hidden');
