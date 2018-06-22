@@ -353,7 +353,7 @@ var findScaleCoords = function () {
     start: scaleCoords.x,
     width: scaleCoords.width,
     fin: scaleCoords.x + scaleCoords.width
-  }
+  };
   return coords;
 };
 
