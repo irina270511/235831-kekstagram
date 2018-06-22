@@ -15,8 +15,7 @@ var ESC_KEYCODE = 27;
 var MAX_SIZE = 100;
 var MIN_SIZE = 25;
 // Шаг изменения размера загружаемых фотографий (в %)
-var MINUS_SIZE_STEP = -25;
-var PLUS_SIZE_STEP = 25;
+var SIZE_CHANGE_STEP = 25;
 
 // DOM-элементы
 var bigPictureOverlay = document.querySelector('.big-picture');
@@ -328,15 +327,17 @@ var changeUploadPreviewStyle = function (sizeValue) {
 /**
  * Вычисляет новый размер картинки, вызывает функции изменения размера картинки.
  *
- * @param {number} sizeStep - переданный шаг изменения размера.
+ * @param {boolean} sizeUp - true: размер увеличивается, false: размер уменьшается.
  */
-var resizeValue = function (sizeStep) {
+var resizeValue = function (sizeUp) {
   var pictureSize = +(sizeValueInput.value).replace('%', '');
-  if ((sizeStep > 0 && pictureSize < MAX_SIZE) || (sizeStep < 0 && pictureSize > MIN_SIZE)) {
-    var newPictureSize = pictureSize + sizeStep;
-    changeSizeValueInput(newPictureSize);
-    changeUploadPreviewStyle(newPictureSize);
+  if (sizeUp && pictureSize < MAX_SIZE) {
+    pictureSize += SIZE_CHANGE_STEP;
+  } else if (!sizeUp && pictureSize > MIN_SIZE) {
+    pictureSize -= SIZE_CHANGE_STEP;
   }
+  changeSizeValueInput(pictureSize);
+  changeUploadPreviewStyle(pictureSize);
 };
 
 
@@ -485,11 +486,11 @@ uploadOverlayCloseButton.addEventListener('click', function () {
 });
 
 sizePlusButton.addEventListener('click', function () {
-  resizeValue(PLUS_SIZE_STEP);
+  resizeValue(true);
 });
 
 sizeMinusButton.addEventListener('click', function () {
-  resizeValue(MINUS_SIZE_STEP);
+  resizeValue(false);
 });
 
 
@@ -501,20 +502,20 @@ scalePin.addEventListener('mousedown', function (evt) {
   evt.preventDefault();
   var coords = findScaleCoords();
 
-  var onMouseMove = function (moveEvt) {
+  var mouseMoveScaleHandler = function (moveEvt) {
     moveEvt.preventDefault();
     moveScalePin(moveEvt.clientX, coords);
   };
 
-  var onMouseUp = function (upEvt) {
+  var mouseUpScaleHandler = function (upEvt) {
     upEvt.preventDefault();
 
-    document.removeEventListener('mousemove', onMouseMove);
-    document.removeEventListener('mouseup', onMouseUp);
+    document.removeEventListener('mousemove', mouseMoveScaleHandler);
+    document.removeEventListener('mouseup', mouseUpScaleHandler);
   };
 
-  document.addEventListener('mousemove', onMouseMove);
-  document.addEventListener('mouseup', onMouseUp);
+  document.addEventListener('mousemove', mouseMoveScaleHandler);
+  document.addEventListener('mouseup', mouseUpScaleHandler);
 
 });
 
