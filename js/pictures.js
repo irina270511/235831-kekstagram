@@ -10,15 +10,13 @@ var COMMENTS_QUANTITY = 2;
 var AVATAR_QUANTITY = 6;
 // Клавиатурные коды
 var ESC_KEYCODE = 27;
-var ENTER_KEYCODE = 13;
+
 // Размеры загружаемых фотографий (в %)
 var MAX_SIZE = 100;
 var MIN_SIZE = 25;
 // Шаг изменения размера загружаемых фотографий (в %)
 var MINUS_SIZE_STEP = -25;
 var PLUS_SIZE_STEP = 25;
-// Максимальная координата (по оси Х) шкалы изменения глубины эффекта фотографии
-var MAX_COORDINATE_X = 100;
 
 // DOM-элементы
 var bigPictureOverlay = document.querySelector('.big-picture');
@@ -306,8 +304,6 @@ var closeUploadOverlay = function () {
 
 };
 
-
-
 // ИЗМЕНЕНИЕ РАЗМЕРА КАРТИНКИ
 
 /**
@@ -378,6 +374,7 @@ var checkEffect = function (id) {
  * Возвращает по id эффекта соответстующий класс, который нужно добавить картинке. При передаче неизвестного аргумента вернет undefined.
  *
  * @param {string} id - id применяемого эффекта.
+ * @return {string} classes[id] - класс изображения с применяемым эффектом.
  */
 var returnClassEffect = function (id) {
   var classes = {
@@ -469,47 +466,47 @@ var changeEffectLevel = function (level) {
 
 renderElements(pictures, picturesSection, renderPreviewPicture);
 
-picturesSection.addEventListener('click', function(evt) {
+picturesSection.addEventListener('click', function (evt) {
   findPicture(evt);
 });
 
 
-bigPictureOverlayCloseButton.addEventListener('click', function() {
+bigPictureOverlayCloseButton.addEventListener('click', function () {
   closeBigPictureOverlay();
 });
 
 
-uploadStartButton.addEventListener('change', function() {
+uploadStartButton.addEventListener('change', function () {
   openUploadOverlay();
 });
 
-uploadOverlayCloseButton.addEventListener('click', function() {
+uploadOverlayCloseButton.addEventListener('click', function () {
   closeUploadOverlay();
 });
 
-sizePlusButton.addEventListener('click', function() {
+sizePlusButton.addEventListener('click', function () {
   resizeValue(PLUS_SIZE_STEP);
 });
 
-sizeMinusButton.addEventListener('click', function() {
+sizeMinusButton.addEventListener('click', function () {
   resizeValue(MINUS_SIZE_STEP);
 });
 
 
-effectsListUl.addEventListener('change', function(evt) {
+effectsListUl.addEventListener('change', function (evt) {
   changeEffect(evt.target.id);
 });
 
-scalePin.addEventListener('mousedown', function(evt) {
+scalePin.addEventListener('mousedown', function (evt) {
   evt.preventDefault();
   var coords = findScaleCoords();
 
-  var onMouseMove = function(moveEvt) {
+  var onMouseMove = function (moveEvt) {
     moveEvt.preventDefault();
     moveScalePin(moveEvt.clientX, coords);
   };
 
-  var onMouseUp = function(upEvt) {
+  var onMouseUp = function (upEvt) {
     upEvt.preventDefault();
 
     document.removeEventListener('mousemove', onMouseMove);
@@ -520,8 +517,6 @@ scalePin.addEventListener('mousedown', function(evt) {
   document.addEventListener('mouseup', onMouseUp);
 
 });
-
-
 
 // Временно спрятанные счетчик комментариев и кнопка дальнейшей загрузки комментариев
 document.querySelector('.social__comment-count')
