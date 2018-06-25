@@ -310,10 +310,10 @@ var closeUploadOverlay = function () {
  *
  * @param {boolean} sizeUp - true: размер увеличивается, false: размер уменьшается.
  * @param {object} img - DOM-элемент, картинка, размер которой изменяется.
- * @param {object} input - DOM-элемент, показывающий пользователю текущий размер картинки.
+ * @param {object} input - DOM-элемент, отображающий текущий размер картинки.
  */
-var resizeValue = function (sizeUp, input, img) {
-  var pictureSize = +(sizeValueInput.value).replace('%', '');
+var resizeValue = function (sizeUp, img, input) {
+  var pictureSize = +(input.value).replace('%', '');
   if (sizeUp && pictureSize < MAX_SIZE) {
     pictureSize += SIZE_CHANGE_STEP;
   } else if (!sizeUp && pictureSize > MIN_SIZE) {
@@ -472,11 +472,11 @@ uploadOverlayCloseButton.addEventListener('click', function () {
 });
 
 sizePlusButton.addEventListener('click', function () {
-  resizeValue(true, sizeValueInput, uploadPreviewImg);
+  resizeValue(true, uploadPreviewImg, sizeValueInput);
 });
 
 sizeMinusButton.addEventListener('click', function () {
-  resizeValue(false, sizeValueInput, uploadPreviewImg);
+  resizeValue(false, uploadPreviewImg, sizeValueInput);
 });
 
 
