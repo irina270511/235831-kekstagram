@@ -230,7 +230,7 @@ var findPicture = function (evt) {
 /**
  * Удаляет всех потомков переданного DOM-элемента
  *
- * @param {object} element - DOM-элемент, потомков которого следует удалить.
+ * @param {object} element - DOM-элемент (Element), потомков которого следует удалить.
  */
 var removeAllChildren = function (element) {
   var childList = element.childNodes;
@@ -306,38 +306,21 @@ var closeUploadOverlay = function () {
 // ИЗМЕНЕНИЕ РАЗМЕРА КАРТИНКИ
 
 /**
- * Меняет значение поля изменения размера картинки (.resize__control--value).
- *
- * @param {number} sizeValue - переданный размер картинки.
- */
-var changeSizeValueInput = function (sizeValue) {
-  sizeValueInput.value = sizeValue + '%';
-};
-
-/**
- * Меняет размер превью картинки на переданное значение.
- *
- * @param {number} sizeValue - переданный размер картинки.
- */
-var changeUploadPreviewStyle = function (sizeValue) {
-  var valueForTransform = sizeValue / 100;
-  uploadPreviewImg.style = 'transform: scale(' + valueForTransform + ')';
-};
-
-/**
- * Вычисляет новый размер картинки, вызывает функции изменения размера картинки.
+ * Меняет размер картинки, в зависимости от входных данных - уменьшает или увеличивает.
  *
  * @param {boolean} sizeUp - true: размер увеличивается, false: размер уменьшается.
+ * @param {object} img - DOM-элемент, картинка, размер которой изменяется.
+ * @param {object} input - DOM-элемент, показывающий пользователю текущий размер картинки.
  */
-var resizeValue = function (sizeUp) {
+var resizeValue = function (sizeUp, input, img) {
   var pictureSize = +(sizeValueInput.value).replace('%', '');
   if (sizeUp && pictureSize < MAX_SIZE) {
     pictureSize += SIZE_CHANGE_STEP;
   } else if (!sizeUp && pictureSize > MIN_SIZE) {
     pictureSize -= SIZE_CHANGE_STEP;
   }
-  changeSizeValueInput(pictureSize);
-  changeUploadPreviewStyle(pictureSize);
+  img.style = 'transform: scale(' + pictureSize / 100 + ')';
+  input.value = pictureSize + '%';
 };
 
 
@@ -406,8 +389,11 @@ var clearClassList = function (element) {
 /**
  * Отображает перемещение пина и уровня слайдера. Вызывает функцию смены глубины эффекта.
  *
- * @param {number} coordinateX - актуальная координата пина слайдера.
+ * @param {number} coordinateX - текущая координата пина слайдера.
  * @param {object} scaleCoords - координаты линии (возможных положений) слайдера.
+ * @param {number} scaleCoords.start - начальная координата линии слайдера.
+ * @param {number} scaleCoords.fin - конечная координата линии слайдера.
+ * @param {number} scaleCoords.width - длина линии слайдера.
  */
 var moveScalePin = function (coordinateX, scaleCoords) {
   if (coordinateX >= scaleCoords.start && coordinateX <= scaleCoords.fin) {
@@ -486,11 +472,11 @@ uploadOverlayCloseButton.addEventListener('click', function () {
 });
 
 sizePlusButton.addEventListener('click', function () {
-  resizeValue(true);
+  resizeValue(true, sizeValueInput, uploadPreviewImg);
 });
 
 sizeMinusButton.addEventListener('click', function () {
-  resizeValue(false);
+  resizeValue(false, sizeValueInput, uploadPreviewImg);
 });
 
 
