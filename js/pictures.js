@@ -317,7 +317,6 @@ var checkRepeats = function (arr) {
   var noRepeats = {};
   for (var i = 0; i < arr.length; i++) {
     var str = arr[i].toLowerCase();
-    console.log(str);
     noRepeats[str] = true;
   }
   if (Object.keys(noRepeats).length === arr.length) {
@@ -331,6 +330,7 @@ var checkRepeats = function (arr) {
  * Проверяет введенные хэштеги на соответствие заданным условиям. Если поле инпута пустое - проверка не осуществляется.
  *
  * @param {object} input - инпут с введенными хэштегами.
+ * @return {object} input.setCustomValidity('') - метод setCustomValidity с пустым значением, указываюий на то, что форма валидна.
  */
 var validateHashtags = function (input) {
   var hashtags = input.value;
@@ -351,7 +351,7 @@ var validateHashtags = function (input) {
       } else if (hashtagsList[i].length > 20) {
         input.setCustomValidity('Тег не может быть длиннее 20 символов');
       } else {
-        input.setCustomValidity('');
+        return input.setCustomValidity('');
       }
     }
   }
