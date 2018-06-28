@@ -314,20 +314,38 @@ var closeUploadOverlay = function () {
  * @return {boolean} true||false - если повторов нет - возвращает true, иначе - false.
  */
 var checkRepeats = function (arr) {
-  var noRepeats = {};
+  var arrLowerCase = [];
   for (var i = 0; i < arr.length; i++) {
-    var str = arr[i].toLowerCase();
-    noRepeats[str] = true;
+    arrLowerCase.push(arr[i].toLowerCase());
+    var place = arrLowerCase.indexOf(arrLowerCase[i]);
+    if (place != i){
+      return false;
+    }
   }
-  if (Object.keys(noRepeats).length === arr.length) {
-    return true;
-  } else {
-    return false;
-  }
+  return true;
 };
+
+// var checkRepeats = function (arr) {
+//   var noRepeats = {};
+//   for (var i = 0; i < arr.length; i++) {
+//     var str = arr[i].toLowerCase();
+//     noRepeats[str] = true;
+//   }
+//   if (Object.keys(noRepeats).length === arr.length) {
+//     return true;
+//   } else {
+//     return false;
+//   }
+// };
 
 /**
  * Проверяет введенные хэштеги на соответствие заданным условиям. Если поле инпута пустое - проверка не осуществляется.
+ * Проверяемые условия:
+ * - нельзя указать больше пяти хэш-тегов;
+ * - один и тот же хэш-тег не может быть использован дважды, при этом теги нечувствительны к регистру;
+ * - хэш-тег начинается с символа # (решётка);
+ * - хеш-тег не может состоять из одного символа;
+ * - максимальная длина одного хэш-тега 20 символов, включая решётку.
  *
  * @param {object} input - инпут с введенными хэштегами.
  */
