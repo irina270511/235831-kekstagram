@@ -318,7 +318,7 @@ var checkRepeats = function (arr) {
   for (var i = 0; i < arr.length; i++) {
     arrLowerCase.push(arr[i].toLowerCase());
     var place = arrLowerCase.indexOf(arrLowerCase[i]);
-    if (place != i){
+    if (place !== i) {
       return false;
     }
   }
