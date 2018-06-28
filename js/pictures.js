@@ -28,6 +28,9 @@ var uploadPreviewImg = document.querySelector('.img-upload__preview');
 var uploadOverlay = document.querySelector('.img-upload__overlay');
 var uploadOverlayCloseButton = document.querySelector('#upload-cancel');
 
+var hashtagsInput = document.querySelector('input[name=hashtags]');
+var descriptionTextarea = document.querySelector('textarea[name=description]');
+
 var sizeMinusButton = document.querySelector('.resize__control--minus');
 var sizePlusButton = document.querySelector('.resize__control--plus');
 var sizeValueInput = document.querySelector('.resize__control--value');
@@ -300,7 +303,58 @@ var closeUploadOverlay = function () {
   uploadStartButton.value = '';
   document.removeEventListener('keydown', escUploadPressHandler);
   document.removeEventListener('click', overlayUploadClickHandler);
+};
 
+// ВАЛИДНОСТЬ ДАННЫХ
+
+/**
+ * Проверяет отсутствие повторов в массиве. Если повторов нет - возвращает true, иначе - false.
+ *
+ * @param {array} arr - массив строк или чисел.
+ * @return {boolean} true||false - если повторов нет - возвращает true, иначе - false.
+ */
+var checkRepeats = function (arr) {
+  var noRepeats = {};
+  for (var i = 0; i < arr.length; i++) {
+    var str = arr[i].toLowerCase();
+    console.log(str);
+    noRepeats[str] = true;
+  }
+  if (Object.keys(noRepeats).length === arr.length) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+/**
+ * Проверяет введенные хэштеги на соответствие заданным условиям. Если поле инпута пустое - проверка не осуществляется.
+ *
+ * @param {object} input - инпут с введенными хэштегами.
+ */
+var validateHashtags = function (input) {
+  var hashtags = input.value;
+  if (hashtags === '') {
+    return input.setCustomValidity('');
+  }
+  var hashtagsList = hashtags.split(' ');
+  if (hashtagsList.length > 5) {
+    input.setCustomValidity('Нельзя использовать больше 5 тегов');
+  } else if (!checkRepeats(hashtagsList)) {
+    input.setCustomValidity('Теги не должны повторяться. Теги нечувствительны к регистру: #ХэшТег и #хэштег считаются одним и тем же тегом');
+  } else {
+    for (var i = 0; i < hashtagsList.length; i++) {
+      if (!(hashtagsList[i].indexOf('#') === 0)) {
+        input.setCustomValidity('Тег должен начинаться с символа решетки (#)');
+      } else if (hashtagsList[i].length < 2) {
+        input.setCustomValidity('Тег не может быть короче двух символов');
+      } else if (hashtagsList[i].length > 20) {
+        input.setCustomValidity('Тег не может быть длиннее 20 символов');
+      } else {
+        input.setCustomValidity('');
+      }
+    }
+  }
 };
 
 // ИЗМЕНЕНИЕ РАЗМЕРА КАРТИНКИ
@@ -334,23 +388,23 @@ var resizeValue = function (sizeUp, img, input) {
 var findScaleCoords = function () {
   var scaleCoords = scaleLine.getBoundingClientRect();
   var coords = {
-    start: scaleCoords.x,
+    start: scaleCoords.x + scaleCoords.width,
     width: scaleCoords.width,
-    fin: scaleCoords.x + scaleCoords.width
+    fin: scaleCoords.x
   };
   return coords;
 };
 
 /**
- * Проверяет id эффекта. Если эффект «Оригинал», то скрывает слайдер регулирования эффекта.
+ * Проверяет id эффекта. Если эффект не «Оригинал», то показывает слайдер регулирования эффекта.
  *
  * @param {string} id - id применяемого эффекта.
  */
 var checkEffect = function (id) {
-  if (id === 'effect-none') {
-    uploadScaleImg.classList.add('hidden');
-  } else {
+  if (!(id === 'effect-none')) {
     uploadScaleImg.classList.remove('hidden');
+  } else {
+    uploadScaleImg.classList.add('hidden');
   }
 };
 
@@ -396,8 +450,8 @@ var clearClassList = function (element) {
  * @param {number} scaleCoords.width - длина линии слайдера.
  */
 var moveScalePin = function (coordinateX, scaleCoords) {
-  if (coordinateX >= scaleCoords.start && coordinateX <= scaleCoords.fin) {
-    var shift = coordinateX - scaleCoords.start;
+  if (coordinateX <= scaleCoords.start && coordinateX >= scaleCoords.fin) {
+    var shift = coordinateX - scaleCoords.fin;
     var level = shift / scaleCoords.width * 100;
 
     scalePin.style.left = shift + 'px';
@@ -406,16 +460,17 @@ var moveScalePin = function (coordinateX, scaleCoords) {
   }
 };
 
-
 /**
  * Меняет эффект на превью картинки, добавляя ей необходимый класс. Основывается на id выбранного эффекта.
- * Перед сменой эффекта обнуляет положение пина слайдера.
+ * Перед сменой эффекта меняет положение слайдера и размер картинки на значения по умолчанию.
  *
  * @param {string} id - id выбранного эффекта.
  */
 var changeEffect = function (id) {
-  var scaleCoords = findScaleCoords();
-  moveScalePin(scaleCoords.start, scaleCoords);
+  scalePin.style.left = '';
+  scaleLevel.style.width = '';
+  uploadPreviewImg.style = '';
+  sizeValueInput.value = MAX_SIZE + '%';
 
   var newClass = returnClassEffect(id);
   checkEffect(id);
@@ -503,6 +558,23 @@ scalePin.addEventListener('mousedown', function (evt) {
   document.addEventListener('mousemove', mouseMoveScaleHandler);
   document.addEventListener('mouseup', mouseUpScaleHandler);
 
+});
+
+hashtagsInput.addEventListener('focus', function () {
+  document.removeEventListener('keydown', escUploadPressHandler);
+});
+
+hashtagsInput.addEventListener('blur', function () {
+  document.addEventListener('keydown', escUploadPressHandler);
+  validateHashtags(hashtagsInput);
+});
+
+descriptionTextarea.addEventListener('focus', function () {
+  document.removeEventListener('keydown', escUploadPressHandler);
+});
+
+descriptionTextarea.addEventListener('blur', function () {
+  document.addEventListener('keydown', escUploadPressHandler);
 });
 
 // Временно спрятанные счетчик комментариев и кнопка дальнейшей загрузки комментариев
