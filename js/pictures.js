@@ -306,37 +306,25 @@ var closeUploadOverlay = function () {
 };
 
 // ВАЛИДНОСТЬ ДАННЫХ
-
 /**
- * Проверяет отсутствие повторов в массиве. Если повторов нет - возвращает true, иначе - false.
+ * Проверяет отсутствие повторов в строковом массиве, без учета регистра. Если повторов нет - возвращает true, иначе - false.
+ * Функция основана на сравнении длины массива и объекта, имена свойств которого - элементы массива. Свойства объекта повторяться не могут, и это гарантирует, что повторяющиеся элементы массива не станут новыми свойствами объекта.
  *
- * @param {array} arr - массив строк или чисел.
+ * @param {array} arr - массив строк.
  * @return {boolean} true||false - если повторов нет - возвращает true, иначе - false.
  */
 var checkRepeats = function (arr) {
-  var arrLowerCase = [];
+  var noRepeats = {};
   for (var i = 0; i < arr.length; i++) {
-    arrLowerCase.push(arr[i].toLowerCase());
-    var place = arrLowerCase.indexOf(arrLowerCase[i]);
-    if (place !== i) {
-      return false;
-    }
+    var str = arr[i].toLowerCase();
+    noRepeats[str] = true;
   }
-  return true;
+  if (Object.keys(noRepeats).length === arr.length) {
+    return true;
+  } else {
+    return false;
+  }
 };
-
-// var checkRepeats = function (arr) {
-//   var noRepeats = {};
-//   for (var i = 0; i < arr.length; i++) {
-//     var str = arr[i].toLowerCase();
-//     noRepeats[str] = true;
-//   }
-//   if (Object.keys(noRepeats).length === arr.length) {
-//     return true;
-//   } else {
-//     return false;
-//   }
-// };
 
 /**
  * Проверяет введенные хэштеги на соответствие заданным условиям. Если поле инпута пустое - проверка не осуществляется.
