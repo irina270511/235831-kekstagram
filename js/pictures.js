@@ -355,6 +355,7 @@ var validateHashtags = function (input) {
       }
     }
   }
+  return;
 };
 
 // ИЗМЕНЕНИЕ РАЗМЕРА КАРТИНКИ
