@@ -23,6 +23,19 @@
     return pictureElement;
   };
 
-  window.renderElements(window.pictures, window.domElements.picturesSection, renderPreviewPicture);
+
+
+  var successHandler = function (pictures) {
+    console.log('pictures' + pictures);
+    window.pictures = pictures;
+    window.renderElements(window.pictures, window.domElements.picturesSection, renderPreviewPicture);
+  };
+
+  var errorHandler = function (errorMessage) {
+    console.log('Фоток нет');
+  };
+
+
+  window.download(successHandler, errorHandler);
 
 })();

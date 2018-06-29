@@ -96,6 +96,6 @@
     return pictures;
   };
 
-  window.pictures = getPictures(PICTURES_QUANTITY);
+  //window.pictures = getPictures(PICTURES_QUANTITY);
 
 })();

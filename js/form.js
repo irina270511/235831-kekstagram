@@ -2,6 +2,54 @@
 (function () {
   var hashtagsInput = document.querySelector('input[name=hashtags]');
   var descriptionTextarea = document.querySelector('textarea[name=description]');
+  var form = document.querySelector('.img-upload__form');
+
+  var uploadStartButton = document.querySelector('#upload-file');
+  var uploadOverlay = document.querySelector('.img-upload__overlay');
+  var uploadOverlayCloseButton = document.querySelector('#upload-cancel');
+  var ESC_KEYCODE = 27;
+
+  /**
+   * Закрывает окно загрузки картинок по нажатию ESC.
+   *
+   * @param {object} evt - объект event.
+   */
+  var escUploadPressHandler = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      closeUploadOverlay();
+    }
+  };
+
+  /**
+   * Вызывает закрытие окна загрузки при клике на поле overlayUpload, вне поля окна загрузки
+   *
+   * @param {object} evt - объект event.
+   */
+  var overlayUploadClickHandler = function (evt) {
+    if (evt.target === uploadOverlay) {
+      closeUploadOverlay();
+    }
+  };
+
+  /**
+   * Открывает окно загрузки фотографий.
+   */
+  var openUploadOverlay = function () {
+    uploadOverlay.classList.remove('hidden');
+    document.addEventListener('keydown', escUploadPressHandler);
+    document.addEventListener('click', overlayUploadClickHandler);
+  };
+
+  /**
+   * Закрывает окно загрузки фотографий.
+   */
+  var closeUploadOverlay = function () {
+    uploadOverlay.classList.add('hidden');
+    uploadStartButton.value = '';
+    document.removeEventListener('keydown', escUploadPressHandler);
+    document.removeEventListener('click', overlayUploadClickHandler);
+  };
+
 
   /**
    * Проверяет отсутствие повторов в строковом массиве, без учета регистра. Если повторов нет - возвращает true, иначе - false.
@@ -61,21 +109,58 @@
     return;
   };
 
+
+  var renderMessageError = function (messageError) {
+    var messageErrorTemplate = document.querySelector('#picture')
+      .content
+      .querySelector('.img-upload__message--error');
+    var messageErrorElement = messageErrorTemplate.cloneNode(true);
+
+    messageErrorElement.innerHTML = messageError;
+
+    messageErrorElement.classList.remove('hidden');
+
+    form.appendChild(messageErrorElement);
+  };
+
+
+  var successHandler = function (data) {
+    closeUploadOverlay();
+  };
+
+  var errorHandler = function (error) {
+    renderMessageError(error);
+    closeUploadOverlay();
+  };
+
+  uploadStartButton.addEventListener('change', function () {
+    openUploadOverlay();
+  });
+
+  uploadOverlayCloseButton.addEventListener('click', function () {
+    closeUploadOverlay();
+  });
+
   hashtagsInput.addEventListener('focus', function () {
-    document.removeEventListener('keydown', window.escUploadPressHandler);
+    document.removeEventListener('keydown', escUploadPressHandler);
   });
 
   hashtagsInput.addEventListener('blur', function () {
-    document.addEventListener('keydown', window.escUploadPressHandler);
+    document.addEventListener('keydown', escUploadPressHandler);
     validateHashtags(hashtagsInput);
   });
 
   descriptionTextarea.addEventListener('focus', function () {
-    document.removeEventListener('keydown', window.escUploadPressHandler);
+    document.removeEventListener('keydown', escUploadPressHandler);
   });
 
   descriptionTextarea.addEventListener('blur', function () {
-    document.addEventListener('keydown', window.escUploadPressHandler);
+    document.addEventListener('keydown', escUploadPressHandler);
+  });
+
+  form.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    window.upload(new FormData(form), successHandler, errorHandler);
   });
 
 })();
