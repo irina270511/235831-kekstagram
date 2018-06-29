@@ -77,13 +77,13 @@
   var changeEffect = function (id) {
     scalePin.style.left = '';
     scaleLevel.style.width = '';
-    domElements.uploadPreviewImg.style = '';
-    domElements.sizeValueInput.value = DEFAULT_SIZE;
+    window.domElements.uploadPreviewImg.style = '';
+    window.domElements.sizeValueInput.value = DEFAULT_SIZE;
 
     var newClass = returnClassEffect(id);
     checkEffect(id);
-    clearClassList(domElements.uploadPreviewImg);
-    domElements.uploadPreviewImg.classList.add(newClass);
+    clearClassList(window.domElements.uploadPreviewImg);
+    window.domElements.uploadPreviewImg.classList.add(newClass);
   };
 
 
@@ -108,7 +108,7 @@
       'effect-phobos': 'blur(' + level * 3 / 100 + 'px)',
       'effect-heat': 'brightness(' + (level * 2 / 100 + 1) + ')'
     };
-    domElements.uploadPreviewImg.style.filter = filterValue[effectId];
+    window.domElements.uploadPreviewImg.style.filter = filterValue[effectId];
   };
 
   /**

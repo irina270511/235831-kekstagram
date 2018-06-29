@@ -51,7 +51,7 @@
     document.addEventListener('click', overlayBigPictureClickHandler);
     document.addEventListener('keydown', escPressHandler);
     // Рендерим и вставляем лист с комментариями
-    renderElements(picture.comments, socialCommentsUl, renderComment);
+    window.renderElements(picture.comments, socialCommentsUl, renderComment);
     // Вставляем остальные параметры картинки
     bigPictureOverlay.querySelector('.big-picture__img > img').src = picture.url;
     bigPictureOverlay.querySelector('.likes-count').textContent = picture.likes;
@@ -66,9 +66,9 @@
    */
   var findPicture = function (evt) {
     if (evt.target.parentNode.className === 'picture__link') {
-      for (var i = 0; i < pictures.length; i++) {
-        if (pictures[i].id === evt.target.parentNode.id) {
-          renderBigPicture(pictures[i]);
+      for (var i = 0; i < window.pictures.length; i++) {
+        if (window.pictures[i].id === evt.target.parentNode.id) {
+          renderBigPicture(window.pictures[i]);
         }
       }
     }

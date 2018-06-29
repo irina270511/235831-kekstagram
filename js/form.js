@@ -62,20 +62,20 @@
   };
 
   hashtagsInput.addEventListener('focus', function () {
-    document.removeEventListener('keydown', escUploadPressHandler);
+    document.removeEventListener('keydown', window.escUploadPressHandler);
   });
 
   hashtagsInput.addEventListener('blur', function () {
-    document.addEventListener('keydown', escUploadPressHandler);
+    document.addEventListener('keydown', window.escUploadPressHandler);
     validateHashtags(hashtagsInput);
   });
 
   descriptionTextarea.addEventListener('focus', function () {
-    document.removeEventListener('keydown', escUploadPressHandler);
+    document.removeEventListener('keydown', window.escUploadPressHandler);
   });
 
   descriptionTextarea.addEventListener('blur', function () {
-    document.addEventListener('keydown', escUploadPressHandler);
+    document.addEventListener('keydown', window.escUploadPressHandler);
   });
 
 })();

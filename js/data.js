@@ -99,17 +99,3 @@
   window.pictures = getPictures(PICTURES_QUANTITY);
 
 })();
-
-
-
-
-
-
-
-
-
-
-
-
-
-

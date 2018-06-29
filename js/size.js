@@ -28,11 +28,11 @@
   };
 
   sizePlusButton.addEventListener('click', function () {
-    resizeValue(true, domElements.uploadPreviewImg, domElements.sizeValueInput);
+    resizeValue(true, window.domElements.uploadPreviewImg, window.domElements.sizeValueInput);
   });
 
   sizeMinusButton.addEventListener('click', function () {
-    resizeValue(false, domElements.uploadPreviewImg, domElements.sizeValueInput);
+    resizeValue(false, window.domElements.uploadPreviewImg, window.domElements.sizeValueInput);
   });
 
 })();

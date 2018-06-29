@@ -23,6 +23,6 @@
     return pictureElement;
   };
 
-  renderElements(pictures, domElements.picturesSection, renderPreviewPicture);
+  window.renderElements(window.pictures, window.domElements.picturesSection, renderPreviewPicture);
 
 })();
