@@ -107,7 +107,7 @@
     document.removeEventListener('keydown', escPressHandler);
   };
 
-  domElements.picturesSection.addEventListener('click', function (evt) {
+  window.domElements.picturesSection.addEventListener('click', function (evt) {
     findPicture(evt);
   });
 

@@ -32,7 +32,7 @@
    */
   var openUploadOverlay = function () {
     uploadOverlay.classList.remove('hidden');
-    document.addEventListener('keydown', escUploadPressHandler);
+    document.addEventListener('keydown', window.escUploadPressHandler);
     document.addEventListener('click', overlayUploadClickHandler);
   };
 
@@ -42,7 +42,7 @@
   var closeUploadOverlay = function () {
     uploadOverlay.classList.add('hidden');
     uploadStartButton.value = '';
-    document.removeEventListener('keydown', escUploadPressHandler);
+    document.removeEventListener('keydown', window.escUploadPressHandler);
     document.removeEventListener('click', overlayUploadClickHandler);
   };
 
