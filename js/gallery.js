@@ -50,12 +50,12 @@
   };
 
   /**
-   * Обработчик неуспешного события загрузки картинок с сервера. Вызывает alert с сообщением об ошибке.
+   * Обработчик неуспешного события загрузки картинок с сервера. Вызывает функцию отрисовки сообщения об ошибке.
    *
-   * @param {string} error - текст сообщения об ошибке.
+   * @param {string} errorMessage - текст сообщения об ошибке.
    */
   var errorHandler = function (errorMessage) {
-    alert(errorMessage);
+    window.renderMessageError(errorMessage);
   };
 
   window.download(successHandler, errorHandler);

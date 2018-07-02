@@ -110,24 +110,6 @@
   };
 
   /**
-   * Создает DOM-элемент на основе шаблона, сообщение об ошибке.
-   *
-   * @param {string} messageError - текст сообщения об ошибке.
-   * @return {object} commentElement - DOM-элемент на основе шаблона, сообщение об ошибке.
-   */
-  var renderMessageError = function (messageError) {
-    var messageErrorTemplate = document.querySelector('#picture')
-      .content
-      .querySelector('.img-upload__message--error');
-    var messageErrorElement = messageErrorTemplate.cloneNode(true);
-
-    messageErrorElement.innerHTML = messageError;
-
-    messageErrorElement.classList.remove('hidden');
-    form.appendChild(messageErrorElement);
-  };
-
-  /**
    * Обработчик успешного события загрузки картинки на сервер. Закрывает окно загрузки.
    */
   var successHandler = function () {
@@ -135,12 +117,12 @@
   };
 
   /**
-   * Обработчик неуспешного события загрузки картинки на сервер. Вызывает функция отрисовки сообщения об ошибке и закрывает окно загрузки.
+   * Обработчик неуспешного события загрузки картинки на сервер. Вызывает функцию отрисовки сообщения об ошибке и закрывает окно загрузки.
    *
-   * @param {string} error - текст сообщения об ошибке.
+   * @param {string} errorMessage - текст сообщения об ошибке.
    */
-  var errorHandler = function (error) {
-    renderMessageError(error);
+  var errorHandler = function (errorMessage) {
+    window.renderMessageError(errorMessage);
     closeUploadOverlay();
   };
 

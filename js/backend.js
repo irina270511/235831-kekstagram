@@ -46,8 +46,7 @@
 
     xhr.open('POST', UPLOAD_URL);
     xhr.send(data);
-
-  }
+  };
 
   window.download = function (onLoad, onError) {
     var xhr = new XMLHttpRequest();
@@ -91,6 +90,7 @@
 
     xhr.open('GET', DOWNLOAD_URL);
     xhr.send();
-  }
+  };
+
 })();
 
