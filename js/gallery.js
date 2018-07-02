@@ -15,7 +15,6 @@
       .querySelector('.picture__link');
     var pictureElement = pictureTemplate.cloneNode(true);
 
-    pictureElement.id = picture.id;
     pictureElement.querySelector('.picture__img').src = picture.url;
     pictureElement.querySelector('.picture__stat--likes').textContent = picture.likes;
     pictureElement.querySelector('.picture__stat--comments').textContent = picture.comments.length;
@@ -23,18 +22,41 @@
     return pictureElement;
   };
 
+  /**
+   * Перемешивает массив случайным образом (алгоритм Фишера-Йетса).
+   *
+   * @param {array} arr - любой массив элементов.
+   * @return {array} newArr - новый массив из тех же элементов в случайном порядке.
+   */
+  var randomizeArray = function (arr) {
+    var arrLength = arr.length;
+    var newArr = [];
+    for (var i = 0; i < arrLength; i++) {
+      var index = Math.floor(Math.random() * arr.length);
+      newArr.push(arr[index]);
+      arr.splice(index, 1);
+    }
+    return newArr;
+  };
 
-
-  var successHandler = function (pictures) {
-    console.log('pictures' + pictures);
-    window.pictures = pictures;
+  /**
+   * Обработчик успешного события загрузки картинок с сервера. Перемешивает массив полученных с сервера данных(картинок) и вызывает функцию отрисовки элементов на странице.
+   *
+   * @param {array} data - массив данных (картинок), полученных с сервера.
+   */
+  var successHandler = function (data) {
+    window.pictures = randomizeArray(data);
     window.renderElements(window.pictures, window.domElements.picturesSection, renderPreviewPicture);
   };
 
+  /**
+   * Обработчик неуспешного события загрузки картинок с сервера. Вызывает alert с сообщением об ошибке.
+   *
+   * @param {string} error - текст сообщения об ошибке.
+   */
   var errorHandler = function (errorMessage) {
-    console.log('Фоток нет');
+    alert(errorMessage);
   };
-
 
   window.download(successHandler, errorHandler);
 

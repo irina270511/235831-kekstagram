@@ -8,7 +8,7 @@
     var xhr = new XMLHttpRequest();
 
     xhr.responseType = 'json';
-    xhr.timeout = 10;
+    xhr.timeout = 10000;
 
     xhr.addEventListener('load', function () {
       var error;
@@ -37,11 +37,11 @@
     });
 
     xhr.addEventListener('error', function () {
-      onError('Произошла ошибка соединения');
+      onError('Произошла ошибка соединения. Попробуйте перегрузить страницу');
     });
 
     xhr.addEventListener('timeout', function () {
-      onError('Запрос не успел выполниться за ' + xhr.timeout + ' мс');
+      onError('Запрос не успел выполниться за ' + xhr.timeout + ' мс. Попробуйте перегрузить страницу');
     });
 
     xhr.open('POST', UPLOAD_URL);
@@ -82,11 +82,11 @@
     });
 
     xhr.addEventListener('error', function () {
-      onError('Произошла ошибка соединения');
+      onError('Произошла ошибка соединения. Попробуйте перегрузить страницу');
     });
 
     xhr.addEventListener('timeout', function () {
-      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+      onError('Запрос не успел выполниться за ' + xhr.timeout + ' мс. Попробуйте перегрузить страницу');
     });
 
     xhr.open('GET', DOWNLOAD_URL);

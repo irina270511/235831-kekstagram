@@ -36,6 +36,7 @@
 
     return commentElement;
   };
+
   /**
    * Отрисовывает страницу с картинкой в полном размере.
    *
@@ -60,14 +61,19 @@
   };
 
   /**
-   * Находит по переданному событию порядковый номер выбранной картинки в массиве картинок (pictures) и вызывает функцию отрисовки.
+   * Находит порядковый номер выбранной картинки в массиве картинок (window.pictures), при помощи сравнения путей к каждой картинке и пути к выбранному элементу.
+   * Если пути совпадают - вызывается функция отрисовки картинки в полном размере.
    *
-   * @param {object} evt - объект event.
+   * @param {object} evtTarget - (evt.target) текущий выбранный элемент.
+   * @param {string} evtTarget.parentNode.className - класс родителя выбранного элемента.
+   * @param {string} evtTarget.src - путь к выбранному элемент.
    */
-  var findPicture = function (evt) {
-    if (evt.target.parentNode.className === 'picture__link') {
+  var findPicture = function (evtTarget) {
+    if (evtTarget.parentNode.className === 'picture__link') {
+      var startPos = evtTarget.src.indexOf('photos');
+      var pictureUrl = evtTarget.src.slice(startPos);
       for (var i = 0; i < window.pictures.length; i++) {
-        if (window.pictures[i].id === evt.target.parentNode.id) {
+        if (window.pictures[i].url === pictureUrl) {
           renderBigPicture(window.pictures[i]);
         }
       }
@@ -80,9 +86,8 @@
    * @param {object} element - DOM-элемент (Element), потомков которого следует удалить.
    */
   var removeAllChildren = function (element) {
-    var childList = element.childNodes;
-    for (var i = 0; i < childList.length; i++) {
-      element.removeChild(childList[i]);
+    while (element.firstChild) {
+      element.removeChild(element.firstChild);
     }
   };
 
@@ -108,7 +113,7 @@
   };
 
   window.domElements.picturesSection.addEventListener('click', function (evt) {
-    findPicture(evt);
+    findPicture(evt.target);
   });
 
   bigPictureOverlayCloseButton.addEventListener('click', function () {
