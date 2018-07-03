@@ -77,13 +77,13 @@
   var changeEffect = function (id) {
     scalePin.style.left = '';
     scaleLevel.style.width = '';
-    window.domElements.uploadPreviewImg.style = '';
-    window.domElements.sizeValueInput.value = DEFAULT_SIZE;
+    window.kekstagram.el.uploadPreviewImg.style = '';
+    window.kekstagram.el.sizeValueInput.value = DEFAULT_SIZE;
 
     var newClass = returnClassEffect(id);
     checkEffect(id);
-    clearClassList(window.domElements.uploadPreviewImg);
-    window.domElements.uploadPreviewImg.classList.add(newClass);
+    clearClassList(window.kekstagram.el.uploadPreviewImg);
+    window.kekstagram.el.uploadPreviewImg.classList.add(newClass);
   };
 
 
@@ -108,7 +108,7 @@
       'effect-phobos': 'blur(' + level * 3 / 100 + 'px)',
       'effect-heat': 'brightness(' + (level * 2 / 100 + 1) + ')'
     };
-    window.domElements.uploadPreviewImg.style.filter = filterValue[effectId];
+    window.kekstagram.el.uploadPreviewImg.style.filter = filterValue[effectId];
   };
 
   /**
