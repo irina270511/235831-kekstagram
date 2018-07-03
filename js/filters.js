@@ -20,7 +20,7 @@
       'filter-popular': window.kekstagram.util.debounce(function () {
         removePictureLinks();
         var popularPictures = window.kekstagram.pictures.slice();
-        window.kekstagram.fn.renderElements(popularPictures, window.kekstagram.el.picturesSection, window.renderPreviewPicture);
+        window.kekstagram.fn.renderElements(popularPictures, window.kekstagram.el.picturesSection, window.kekstagram.fn.renderPreviewPicture);
       }, DEBOUNCE_INTERVAL),
 
       /**
@@ -33,7 +33,7 @@
         var copyPictures = window.kekstagram.pictures.slice();
         var newPictures = window.kekstagram.util.randomizeArray(copyPictures);
         newPictures.length = NEW_PICTURES_QUATITY;
-        window.kekstagram.fn.renderElements(newPictures, window.kekstagram.el.picturesSection, window.renderPreviewPicture);
+        window.kekstagram.fn.renderElements(newPictures, window.kekstagram.el.picturesSection, window.kekstagram.fn.renderPreviewPicture);
       }, DEBOUNCE_INTERVAL),
 
       /**
@@ -43,10 +43,10 @@
       'filter-discussed': window.kekstagram.util.debounce(function () {
         removePictureLinks();
         var disscussedPictures = window.kekstagram.pictures.slice();
-        disscussedPictures.sort(function(a, b) {
+        disscussedPictures.sort(function (a, b) {
           return b.comments.length - a.comments.length;
         });
-        window.kekstagram.fn.renderElements(disscussedPictures, window.kekstagram.el.picturesSection, window.renderPreviewPicture);
+        window.kekstagram.fn.renderElements(disscussedPictures, window.kekstagram.el.picturesSection, window.kekstagram.fn.renderPreviewPicture);
       }, DEBOUNCE_INTERVAL)
     }
   };
@@ -69,8 +69,10 @@
    */
   var buttonClickHandler = function (id) {
     for (var key in Filter.filterSelector) {
-      Filter.filterSelector[key].classList.remove('img-filters__button--active');
-    };
+      if (Filter.filterSelector.hasOwnProperty(key)) {
+        Filter.filterSelector[key].classList.remove('img-filters__button--active');
+      }
+    }
     Filter.filterSelector[id].classList.add('img-filters__button--active');
     Filter.filterFn[id]();
   };

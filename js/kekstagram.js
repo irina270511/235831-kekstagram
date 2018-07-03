@@ -38,6 +38,28 @@ window.kekstagram = {
         fragment.appendChild(renderFunction(elements[i]));
       }
       appendTo.appendChild(fragment);
+    },
+
+    /**
+     * Создает DOM-элемент на основе шаблона, превью картинок на главной странице.
+     *
+     * @param {object} picture - картинка с характеристиками.
+     * @param {string} picture.url - путь к картинке.
+     * @param {number} picture.likes - количество лайков к картинке.
+     * @param {array} picture.comments - массив с комментариями к картинке.
+     * @return {object} pictureElement - DOM-элемент на основе шаблона, превью картинки.
+     */
+    renderPreviewPicture: function (picture) {
+      var pictureTemplate = document.querySelector('#picture')
+        .content
+        .querySelector('.picture__link');
+      var pictureElement = pictureTemplate.cloneNode(true);
+
+      pictureElement.querySelector('.picture__img').src = picture.url;
+      pictureElement.querySelector('.picture__stat--likes').textContent = picture.likes;
+      pictureElement.querySelector('.picture__stat--comments').textContent = picture.comments.length;
+
+      return pictureElement;
     }
   },
 
@@ -100,12 +122,12 @@ window.kekstagram = {
     debounce: function (fn, interval) {
       var lastTimeout = null;
 
-      return function() {
+      return function () {
         var args = arguments;
         if (lastTimeout) {
           window.clearTimeout(lastTimeout);
         }
-        lastTimeout = window.setTimeout(function() {
+        lastTimeout = window.setTimeout(function () {
           fn.apply(null, args);
         }, interval);
       };
