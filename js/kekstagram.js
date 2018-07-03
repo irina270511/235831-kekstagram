@@ -40,5 +40,5 @@ window.kekstagram = {
       appendTo.appendChild(fragment);
     }
   }
-}
+};
 
