@@ -88,6 +88,27 @@ window.kekstagram = {
         arr.splice(index, 1);
       }
       return newArr;
+    },
+
+    /**
+     * Функция "устранение дребезга". Если после вызова переданной функции успел пройти заданный временной интервал, переданная функция исполнится.
+     *
+     * @param {function} fn - функция, которая должна быть вызвана.
+     * @param {number} interval - временной интервал.
+     * @return {function} function - исполнение функции.
+     */
+    debounce: function (fn, interval) {
+      var lastTimeout = null;
+
+      return function() {
+        var args = arguments;
+        if (lastTimeout) {
+          window.clearTimeout(lastTimeout);
+        }
+        lastTimeout = window.setTimeout(function() {
+          fn.apply(null, args);
+        }, interval);
+      };
     }
   }
 };

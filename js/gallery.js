@@ -9,7 +9,7 @@
    * @param {array} picture.comments - массив с комментариями к картинке.
    * @return {object} pictureElement - DOM-элемент на основе шаблона, превью картинки.
    */
-  var renderPreviewPicture = function (picture) {
+  window.renderPreviewPicture = function (picture) {
     var pictureTemplate = document.querySelector('#picture')
       .content
       .querySelector('.picture__link');
@@ -28,8 +28,9 @@
    * @param {array} data - массив данных (картинок), полученных с сервера.
    */
   var successHandler = function (data) {
-    window.kekstagram.pictures = window.kekstagram.util.randomizeArray(data);
+    window.kekstagram.pictures = data;
     window.kekstagram.fn.renderElements(window.kekstagram.pictures, window.kekstagram.el.picturesSection, renderPreviewPicture);
+    document.querySelector('.img-filters').classList.remove('img-filters--inactive');
   };
 
   /**
