@@ -9,17 +9,6 @@
   var ESC_KEYCODE = 27;
 
   /**
-   * Закрывает окно с картинкой в полном размере по нажатию ESC.
-   *
-   * @param {object} evt - объект event.
-   */
-  var escPressHandler = function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
-      closeBigPictureOverlay();
-    }
-  };
-
-  /**
    * Создает DOM-элемент на основе шаблона, комментарий к картинке.
    *
    * @param {string} comment - текст комментария.
@@ -52,7 +41,7 @@
     document.addEventListener('click', overlayBigPictureClickHandler);
     document.addEventListener('keydown', escPressHandler);
     // Рендерим и вставляем лист с комментариями
-    window.renderElements(picture.comments, socialCommentsUl, renderComment);
+    window.kekstagram.fn.renderElements(picture.comments, socialCommentsUl, renderComment);
     // Вставляем остальные параметры картинки
     bigPictureOverlay.querySelector('.big-picture__img > img').src = picture.url;
     bigPictureOverlay.querySelector('.likes-count').textContent = picture.likes;
@@ -61,44 +50,24 @@
   };
 
   /**
-   * Находит порядковый номер выбранной картинки в массиве картинок (window.pictures), при помощи сравнения путей к каждой картинке и пути к выбранному элементу.
-   * Если пути совпадают - вызывается функция отрисовки картинки в полном размере.
+   * Находит выбранную картинку (путем сравнения url) и вызывает функцию отрисовки картинки в полном размере.
    *
    * @param {object} evtTarget - (evt.target) текущий выбранный элемент.
    * @param {string} evtTarget.parentNode.className - класс родителя выбранного элемента.
    * @param {string} evtTarget.src - путь к выбранному элемент.
    */
-  var findPicture = function (evtTarget) {
+  var renderPicture = function (evtTarget) {
     if (evtTarget.parentNode.className === 'picture__link') {
-      var startPos = evtTarget.src.indexOf('photos');
-      var pictureUrl = evtTarget.src.slice(startPos);
-      for (var i = 0; i < window.pictures.length; i++) {
-        if (window.pictures[i].url === pictureUrl) {
-          renderBigPicture(window.pictures[i]);
+      var regexp = /(photos)\/\d+\.jpg$/;
+      var pictureUrl = regexp.exec(evtTarget.src)[0];
+      var pictures = window.kekstagram.pictures;
+
+      for (var i = 0; i < pictures.length; i++) {
+        if (pictures[i].url === pictureUrl) {
+          renderBigPicture(pictures[i]);
+          break;
         }
       }
-    }
-  };
-
-  /**
-   * Удаляет всех потомков переданного DOM-элемента
-   *
-   * @param {object} element - DOM-элемент (Element), потомков которого следует удалить.
-   */
-  var removeAllChildren = function (element) {
-    while (element.firstChild) {
-      element.removeChild(element.firstChild);
-    }
-  };
-
-  /**
-   * Вызывает закрытие окна в полном размере при клике на поле overlayBigPicture, вне поля окна с картинкой
-   *
-   * @param {object} evt - объект event.
-   */
-  var overlayBigPictureClickHandler = function (evt) {
-    if (evt.target === bigPictureOverlay) {
-      closeBigPictureOverlay();
     }
   };
 
@@ -106,14 +75,36 @@
    * Закрывает окно с картинкой в полном размере, перед этим удаляя все комментарии под картинкой.
    */
   var closeBigPictureOverlay = function () {
-    removeAllChildren(socialCommentsUl);
+    window.util.removeAllChildren(socialCommentsUl);
     bigPictureOverlay.classList.add('hidden');
     document.removeEventListener('click', overlayBigPictureClickHandler);
     document.removeEventListener('keydown', escPressHandler);
   };
 
-  window.domElements.picturesSection.addEventListener('click', function (evt) {
-    findPicture(evt.target);
+  /**
+   * Закрывает окно с картинкой в полном размере по нажатию ESC.
+   *
+   * @param {KeyboardEvent} evt - объект Event.
+   */
+  var escPressHandler = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      closeBigPictureOverlay();
+    }
+  };
+
+  /**
+   * Вызывает закрытие окна в полном размере при клике на поле overlayBigPicture, вне поля окна с картинкой
+   *
+   * @param {MouseEvent} evt - объект Event.
+   */
+  var overlayBigPictureClickHandler = function (evt) {
+    if (evt.target === bigPictureOverlay) {
+      closeBigPictureOverlay();
+    }
+  };
+
+  window.kekstagram.el.picturesSection.addEventListener('click', function (evt) {
+    renderPicture(evt.target);
   });
 
   bigPictureOverlayCloseButton.addEventListener('click', function () {

@@ -4,7 +4,15 @@
   var UPLOAD_URL = 'https://js.dump.academy/kekstagram';
   var DOWNLOAD_URL = 'https://js.dump.academy/kekstagram/data';
 
-  window.upload = function (data, onLoad, onError) {
+  /**
+   * Отправляет данные на сервер. Вызывает функции-обработчики для успешной и неуспешной отправки.
+   * Адрес сервера - UPLOAD_URL.
+   *
+   * @param {object} data - данные, которые отправляются на сервер (загружаемая картинка и ее параметры).
+   * @param {function} onLoad - обработчик успешной отправки.
+   * @param {function} onError - обработчик неуспешной отправки. Принимает в качестве параметра string - сообщение об ошибке.
+   */
+  window.kekstagram.fn.upload = function (data, onLoad, onError) {
     var xhr = new XMLHttpRequest();
 
     xhr.responseType = 'json';
@@ -14,7 +22,7 @@
       var error;
       switch (xhr.status) {
         case 200:
-          onLoad(xhr.response);
+          onLoad();
           break;
 
         case 400:
@@ -48,7 +56,14 @@
     xhr.send(data);
   };
 
-  window.download = function (onLoad, onError) {
+  /**
+   * Запрашивает и принимает данные с сервера. Вызывает функции-обработчики для успешной и неуспешной загрузки.
+   * Адрес сервера - DOWNLOAD_URL.
+   *
+   * @param {function} onLoad - обработчик успешной загрузки. Принимает в качестве параметра данные - массив объектов.
+   * @param {function} onError - обработчик неуспешной загрузки. Принимает в качестве параметра string - сообщение об ошибке.
+   */
+  window.kekstagram.fn.download = function (onLoad, onError) {
     var xhr = new XMLHttpRequest();
 
     xhr.responseType = 'json';

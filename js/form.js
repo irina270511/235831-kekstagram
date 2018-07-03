@@ -12,7 +12,7 @@
   /**
    * Закрывает окно загрузки картинок по нажатию ESC.
    *
-   * @param {object} evt - объект event.
+   * @param {KeyboardEvent} evt - объект Event.
    */
   var escUploadPressHandler = function (evt) {
     if (evt.keyCode === ESC_KEYCODE) {
@@ -23,7 +23,7 @@
   /**
    * Вызывает закрытие окна загрузки при клике на поле overlayUpload, вне поля окна загрузки
    *
-   * @param {object} evt - объект event.
+   * @param {MouseEvent} evt - объект Event.
    */
   var overlayUploadClickHandler = function (evt) {
     if (evt.target === uploadOverlay) {
@@ -50,27 +50,6 @@
     document.removeEventListener('click', overlayUploadClickHandler);
   };
 
-
-  /**
-   * Проверяет отсутствие повторов в строковом массиве, без учета регистра. Если повторов нет - возвращает true, иначе - false.
-   * Функция основана на сравнении длины массива и объекта, имена свойств которого - элементы массива. Свойства объекта повторяться не могут, и это гарантирует, что повторяющиеся элементы массива не станут новыми свойствами объекта.
-   *
-   * @param {array} arr - массив строк.
-   * @return {boolean} true||false - если повторов нет - возвращает true, иначе - false.
-   */
-  var checkRepeats = function (arr) {
-    var noRepeats = {};
-    for (var i = 0; i < arr.length; i++) {
-      var str = arr[i].toLowerCase();
-      noRepeats[str] = true;
-    }
-    if (Object.keys(noRepeats).length === arr.length) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
   /**
    * Проверяет введенные хэштеги на соответствие заданным условиям. Если поле инпута пустое - проверка не осуществляется.
    * Проверяемые условия:
@@ -91,7 +70,7 @@
     var hashtagsList = hashtags.split(' ');
     if (hashtagsList.length > 5) {
       input.setCustomValidity('Нельзя использовать больше 5 тегов');
-    } else if (!checkRepeats(hashtagsList)) {
+    } else if (!window.util.checkRepeats(hashtagsList)) {
       input.setCustomValidity('Теги не должны повторяться. Теги нечувствительны к регистру: #ХэшТег и #хэштег считаются одним и тем же тегом');
     } else {
       for (var i = 0; i < hashtagsList.length; i++) {
@@ -122,7 +101,7 @@
    * @param {string} errorMessage - текст сообщения об ошибке.
    */
   var errorHandler = function (errorMessage) {
-    window.renderMessageError(errorMessage);
+    window.kekstagram.fn.renderMessageError(errorMessage);
     closeUploadOverlay();
   };
 
@@ -153,7 +132,7 @@
 
   form.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.upload(new FormData(form), successHandler, errorHandler);
+    window.kekstagram.fn.upload(new FormData(form), successHandler, errorHandler);
   });
 
 })();

@@ -23,30 +23,13 @@
   };
 
   /**
-   * Перемешивает массив случайным образом (алгоритм Фишера-Йетса).
-   *
-   * @param {array} arr - любой массив элементов.
-   * @return {array} newArr - новый массив из тех же элементов в случайном порядке.
-   */
-  var randomizeArray = function (arr) {
-    var arrLength = arr.length;
-    var newArr = [];
-    for (var i = 0; i < arrLength; i++) {
-      var index = Math.floor(Math.random() * arr.length);
-      newArr.push(arr[index]);
-      arr.splice(index, 1);
-    }
-    return newArr;
-  };
-
-  /**
    * Обработчик успешного события загрузки картинок с сервера. Перемешивает массив полученных с сервера данных(картинок) и вызывает функцию отрисовки элементов на странице.
    *
    * @param {array} data - массив данных (картинок), полученных с сервера.
    */
   var successHandler = function (data) {
-    window.pictures = randomizeArray(data);
-    window.renderElements(window.pictures, window.domElements.picturesSection, renderPreviewPicture);
+    window.kekstagram.pictures = window.util.randomizeArray(data);
+    window.kekstagram.fn.renderElements(window.kekstagram.pictures, window.kekstagram.el.picturesSection, renderPreviewPicture);
   };
 
   /**
@@ -55,9 +38,9 @@
    * @param {string} errorMessage - текст сообщения об ошибке.
    */
   var errorHandler = function (errorMessage) {
-    window.renderMessageError(errorMessage);
+    window.kekstagram.fn.renderMessageError(errorMessage);
   };
 
-  window.download(successHandler, errorHandler);
+  window.kekstagram.fn.download(successHandler, errorHandler);
 
 })();
