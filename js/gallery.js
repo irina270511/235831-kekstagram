@@ -28,7 +28,7 @@
    * @param {array} data - массив данных (картинок), полученных с сервера.
    */
   var successHandler = function (data) {
-    window.kekstagram.pictures = window.util.randomizeArray(data);
+    window.kekstagram.pictures = window.kekstagram.util.randomizeArray(data);
     window.kekstagram.fn.renderElements(window.kekstagram.pictures, window.kekstagram.el.picturesSection, renderPreviewPicture);
   };
 

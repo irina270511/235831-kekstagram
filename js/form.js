@@ -70,7 +70,7 @@
     var hashtagsList = hashtags.split(' ');
     if (hashtagsList.length > 5) {
       input.setCustomValidity('Нельзя использовать больше 5 тегов');
-    } else if (!window.util.checkRepeats(hashtagsList)) {
+    } else if (!window.kekstagram.util.checkRepeats(hashtagsList)) {
       input.setCustomValidity('Теги не должны повторяться. Теги нечувствительны к регистру: #ХэшТег и #хэштег считаются одним и тем же тегом');
     } else {
       for (var i = 0; i < hashtagsList.length; i++) {

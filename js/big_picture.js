@@ -75,7 +75,7 @@
    * Закрывает окно с картинкой в полном размере, перед этим удаляя все комментарии под картинкой.
    */
   var closeBigPictureOverlay = function () {
-    window.util.removeAllChildren(socialCommentsUl);
+    window.kekstagram.util.removeAllChildren(socialCommentsUl);
     bigPictureOverlay.classList.add('hidden');
     document.removeEventListener('click', overlayBigPictureClickHandler);
     document.removeEventListener('keydown', escPressHandler);

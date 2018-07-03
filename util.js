@@ -1,6 +1,6 @@
 'use strict';
 
-window.util = {
+window.kekstagram.util = {
   /**
    * Удаляет всех потомков переданного DOM-элемента
    *
