@@ -4,7 +4,7 @@
   var bigPictureOverlay = document.querySelector('.big-picture');
   var bigPictureOverlayCloseButton = document.querySelector('#picture-cancel');
   var socialCommentsUl = document.querySelector('.social__comments');
-  var commentCountElement = document.querySelector('.social__comment-count');
+  var currentCommentsCount = document.querySelector('.current-comments-count');
   var loadMoreButton = document.querySelector('.social__loadmore');
   // Количество доступных аватаров для комментаторов
   var AVATAR_QUANTITY = 6;
@@ -28,9 +28,9 @@
     });
 
     if (quantity < comments.length) {
-      document.querySelector('.current-comments-count').textContent = quantity;
+      currentCommentsCount.textContent = quantity;
     } else {
-      document.querySelector('.current-comments-count').textContent = comments.length;
+      currentCommentsCount.textContent = comments.length;
       loadMoreButton.classList.add('hidden');
     }
   };
@@ -64,7 +64,7 @@
     bigPictureOverlay.classList.add('hidden');
     document.removeEventListener('click', overlayBigPictureClickHandler);
     document.removeEventListener('keydown', escPressHandler);
-    document.querySelector('.social__loadmore').removeEventListener('click', loadMoreButtonClickHandler);
+    loadMoreButton.removeEventListener('click', loadMoreButtonClickHandler);
   };
 
   /**
