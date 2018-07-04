@@ -7,7 +7,7 @@
    */
   var successHandler = function (data) {
     window.kekstagram.pictures = data;
-    window.kekstagram.fn.renderElements(window.kekstagram.pictures, window.kekstagram.el.picturesSection, window.kekstagram.fn.renderPreviewPicture);
+    window.kekstagram.fn.renderElements(window.kekstagram.pictures, window.kekstagram.el.picturesSection, window.kekstagram.fn.renderPreviewPicture, window.kekstagram.pictures.length);
     document.querySelector('.img-filters').classList.remove('img-filters--inactive');
   };
 

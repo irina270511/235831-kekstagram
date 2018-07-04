@@ -3,11 +3,14 @@
   var hashtagsInput = document.querySelector('input[name=hashtags]');
   var descriptionTextarea = document.querySelector('textarea[name=description]');
   var form = document.querySelector('.img-upload__form');
-
+  var uploadLabel = document.querySelector('.img-upload__label');
   var uploadStartButton = document.querySelector('#upload-file');
   var uploadOverlay = document.querySelector('.img-upload__overlay');
   var uploadOverlayCloseButton = document.querySelector('#upload-cancel');
   var ESC_KEYCODE = 27;
+  var MAX_HASHTAG_QUANTITY = 5;
+  var MAX_HASHTAG_SIZE = 20;
+  var MIN_HASHTAG_SIZE = 2;
 
   /**
    * Закрывает окно загрузки картинок по нажатию ESC.
@@ -44,6 +47,7 @@
    * Закрывает окно загрузки фотографий.
    */
   var closeUploadOverlay = function () {
+    uploadLabel.classList.add('hidden');
     uploadOverlay.classList.add('hidden');
     uploadStartButton.value = '';
     document.removeEventListener('keydown', escUploadPressHandler);
@@ -68,7 +72,7 @@
       return;
     }
     var hashtagsList = hashtags.split(' ');
-    if (hashtagsList.length > 5) {
+    if (hashtagsList.length > MAX_HASHTAG_QUANTITY) {
       input.setCustomValidity('Нельзя использовать больше 5 тегов');
     } else if (!window.kekstagram.util.checkRepeats(hashtagsList)) {
       input.setCustomValidity('Теги не должны повторяться. Теги нечувствительны к регистру: #ХэшТег и #хэштег считаются одним и тем же тегом');
@@ -76,10 +80,10 @@
       for (var i = 0; i < hashtagsList.length; i++) {
         if (!(hashtagsList[i].indexOf('#') === 0)) {
           input.setCustomValidity('Тег должен начинаться с символа решетки (#)');
-        } else if (hashtagsList[i].length < 2) {
-          input.setCustomValidity('Тег не может быть короче двух символов');
-        } else if (hashtagsList[i].length > 20) {
-          input.setCustomValidity('Тег не может быть длиннее 20 символов');
+        } else if (hashtagsList[i].length < MIN_HASHTAG_SIZE) {
+          input.setCustomValidity('Тег не может быть короче ' + MIN_HASHTAG_SIZE + ' символов');
+        } else if (hashtagsList[i].length > MAX_HASHTAG_SIZE) {
+          input.setCustomValidity('Тег не может быть длиннее ' + MAX_HASHTAG_SIZE + ' символов');
         } else {
           input.setCustomValidity('');
         }
@@ -89,9 +93,10 @@
   };
 
   /**
-   * Обработчик успешного события загрузки картинки на сервер. Закрывает окно загрузки.
+   * Обработчик успешного события загрузки картинки на сервер. Закрывает окно загрузки, перед этим скрывая кнопку загрузки.
    */
   var successHandler = function () {
+    uploadLabel.classList.add('hidden');
     closeUploadOverlay();
   };
 

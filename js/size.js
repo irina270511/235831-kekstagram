@@ -23,7 +23,7 @@
     } else if (!sizeUp && pictureSize > MIN_SIZE) {
       pictureSize -= SIZE_CHANGE_STEP;
     }
-    img.style.transform = 'scale(' + pictureSize / 100 + ')';
+    img.style.transform = 'scale(' + pictureSize / MAX_SIZE + ')';
     input.value = pictureSize + '%';
   };
 

@@ -1,5 +1,4 @@
 'use strict';
-
 (function () {
   var DEBOUNCE_INTERVAL = 500; // ms
   var NEW_PICTURES_QUATITY = 10;

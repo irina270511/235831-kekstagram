@@ -38,7 +38,12 @@
                 autocomplete="off">
 
             <fieldset class="img-upload__start">
-              <input type="file" id="upload-file" class="img-upload__input visually-hidden" name="filename" required>
+              <input type="file"
+                     id="upload-file"
+                     class="img-upload__input visually-hidden"
+                     name="filename"
+                     autocomplete="off"
+                     required>
               <label for="upload-file" class="img-upload__label img-upload__control">Загрузить</label>
             </fieldset>
 
@@ -57,7 +62,7 @@
                   </div>
 
                   <fieldset class="img-upload__scale scale hidden">
-                    <input type="number" class="scale__value" name="effect-level" value="100" min="0" max="100">
+                    <input type="number" class="scale__value" name="effect-level" value="100" min="0" max="100" autocomplete="off">
                     <div class="scale__line">
                       <div class="scale__pin" tabindex="0">Кнопка изменения глубины эффекта фотографии</div>
                       <div class="scale__level">Глубина эффекта фотографии</div>
@@ -115,8 +120,8 @@
                 </fieldset>
 
                 <fieldset class="img-upload__text text">
-                  <input class="text__hashtags" name="hashtags" placeholder="#хэш-тег">
-                  <textarea class="text__description" name="description" placeholder="Ваш комментарий..." maxlength="140"></textarea>
+                  <input class="text__hashtags" name="hashtags" placeholder="#хэш-тег" autocomplete="off">
+                  <textarea class="text__description" name="description" placeholder="Ваш комментарий..." maxlength="140" autocomplete="off"></textarea>
                 </fieldset>
 
                 <button type="submit" class="img-upload__submit" id="upload-submit">Опубликовать</button>
@@ -141,10 +146,11 @@
             <p class="social__caption">Тестим новую камеру! =)</p>
             <p class="social__likes">Нравится <span class="likes-count">356</span></p>
           </div>
-          <div class="social__comment-count">5 из <span class="comments-count">125</span> комментариев</div>
+          <div class="social__comment-count"><span class="current-comments-count">5</span> из
+            <span class="comments-count">125</span> комментариев</div>
           <ul class="social__comments">
           </ul>
-          <button class="social__loadmore" type="button">Загрузить еще</button>
+          <button class="social__loadmore" type="button" counter="0">Загрузить еще</button>
           <div class="social__footer">
             <img class="social__picture" src="img/avatar-6.svg" alt="Аватар комментатора фотографии" width="35" height="35">
             <input type="text" class="social__footer-text" placeholder="Ваш комментарий...">
@@ -190,7 +196,7 @@
       </p>
     </a>
 
-    <li class="social__comment social__comment--text">
+    <li class="social__comment social__comment--text visually-hidden">
       <img class="social__picture" src="" alt="Аватар комментатора фотографии" width="35" height="35">
       <p class="social__text"></p>
     </li>
@@ -214,7 +220,7 @@
 
   <script src="js/gallery.js"></script>
   <script src="js/filters.js"></script>
-  <script src="js/big_picture.js"></script>
+  <script src="js/big-picture.js"></script>
   <script src="js/form.js"></script>
   <script src="js/size.js"></script>
   <script src="js/effects.js"></script>
