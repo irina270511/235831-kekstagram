@@ -20,7 +20,7 @@
           removePictureLinks();
           var popularPictures = window.kekstagram.pictures.slice();
           window.kekstagram.fn.renderElements(popularPictures, window.kekstagram.el.picturesSection, window.kekstagram.fn.renderPreviewPicture);
-        })
+        });
       },
 
       /**
@@ -35,7 +35,7 @@
           var newPictures = window.kekstagram.util.randomizeArray(copyPictures);
           newPictures.length = NEW_PICTURES_QUATITY;
           window.kekstagram.fn.renderElements(newPictures, window.kekstagram.el.picturesSection, window.kekstagram.fn.renderPreviewPicture);
-        })
+        });
       },
 
       /**
@@ -50,7 +50,7 @@
             return b.comments.length - a.comments.length;
           });
           window.kekstagram.fn.renderElements(disscussedPictures, window.kekstagram.el.picturesSection, window.kekstagram.fn.renderPreviewPicture);
-        })
+        });
       }
     }
   };

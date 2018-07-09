@@ -11,7 +11,7 @@
   var MAX_HASHTAG_QUANTITY = 5;
   var MAX_HASHTAG_SIZE = 20;
   var MIN_HASHTAG_SIZE = 2;
-  var FILE_TYPES = ['image/jpeg', 'image/jpg','image/png'];
+  var FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 
   /**
    * Закрывает окно загрузки картинок по нажатию ESC.
@@ -101,8 +101,8 @@
    * @return {boolean} file - возвращает true, если совпадение найдено, иначе - false.
    */
   var validateFileType = function (file) {
-    for(var i = 0; i < FILE_TYPES.length; i++) {
-      if(file.type === FILE_TYPES[i]) {
+    for (var i = 0; i < FILE_TYPES.length; i++) {
+      if (file.type === FILE_TYPES[i]) {
         return true;
       }
     }
