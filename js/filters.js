@@ -1,6 +1,5 @@
 'use strict';
 (function () {
-  var DEBOUNCE_INTERVAL = 500; // ms
   var NEW_PICTURES_QUATITY = 10;
   var filterForm = document.querySelector('.img-filters__form');
 
@@ -16,37 +15,43 @@
        * Вызывает отрисовку элементов в прямом порядке, перед этим вызвав функцию удаления аналогичных элементов страницы.
        * Вызывается через функцию "устранения дребезга".
        */
-      'filter-popular': window.kekstagram.util.debounce(function () {
-        removePictureLinks();
-        var popularPictures = window.kekstagram.pictures.slice();
-        window.kekstagram.fn.renderElements(popularPictures, window.kekstagram.el.picturesSection, window.kekstagram.fn.renderPreviewPicture);
-      }, DEBOUNCE_INTERVAL),
+      'filter-popular': function () {
+        window.kekstagram.util.debounce(function () {
+          removePictureLinks();
+          var popularPictures = window.kekstagram.pictures.slice();
+          window.kekstagram.fn.renderElements(popularPictures, window.kekstagram.el.picturesSection, window.kekstagram.fn.renderPreviewPicture);
+        })
+      },
 
       /**
        * Вызывает отрисовку элементов в случайном порядке, перед этим вызвав функцию удаления аналогичных элементов страницы.
        * Количество элементов - NEW_PICTURES_QUATITY.
        * Вызывается через функцию "устранения дребезга".
        */
-      'filter-new': window.kekstagram.util.debounce(function () {
-        removePictureLinks();
-        var copyPictures = window.kekstagram.pictures.slice();
-        var newPictures = window.kekstagram.util.randomizeArray(copyPictures);
-        newPictures.length = NEW_PICTURES_QUATITY;
-        window.kekstagram.fn.renderElements(newPictures, window.kekstagram.el.picturesSection, window.kekstagram.fn.renderPreviewPicture);
-      }, DEBOUNCE_INTERVAL),
+      'filter-new': function () {
+        window.kekstagram.util.debounce(function () {
+          removePictureLinks();
+          var copyPictures = window.kekstagram.pictures.slice();
+          var newPictures = window.kekstagram.util.randomizeArray(copyPictures);
+          newPictures.length = NEW_PICTURES_QUATITY;
+          window.kekstagram.fn.renderElements(newPictures, window.kekstagram.el.picturesSection, window.kekstagram.fn.renderPreviewPicture);
+        })
+      },
 
       /**
        * Вызывает отрисовку элементов в порядке убывания количества комментариев к элементам, перед этим вызвав функцию удаления аналогичных элементов страницы.
        * Вызывается через функцию "устранения дребезга".
        */
-      'filter-discussed': window.kekstagram.util.debounce(function () {
-        removePictureLinks();
-        var disscussedPictures = window.kekstagram.pictures.slice();
-        disscussedPictures.sort(function (a, b) {
-          return b.comments.length - a.comments.length;
-        });
-        window.kekstagram.fn.renderElements(disscussedPictures, window.kekstagram.el.picturesSection, window.kekstagram.fn.renderPreviewPicture);
-      }, DEBOUNCE_INTERVAL)
+      'filter-discussed': function () {
+        window.kekstagram.util.debounce(function () {
+          removePictureLinks();
+          var disscussedPictures = window.kekstagram.pictures.slice();
+          disscussedPictures.sort(function (a, b) {
+            return b.comments.length - a.comments.length;
+          });
+          window.kekstagram.fn.renderElements(disscussedPictures, window.kekstagram.el.picturesSection, window.kekstagram.fn.renderPreviewPicture);
+        })
+      }
     }
   };
 

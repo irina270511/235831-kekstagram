@@ -2,7 +2,7 @@
 (function () {
   var UPLOAD_URL = 'https://js.dump.academy/kekstagram';
   var DOWNLOAD_URL = 'https://js.dump.academy/kekstagram/data';
-  var DEFAULT_TIMEOUT = 10000;
+  var DEFAULT_TIMEOUT = 30000;
 
   /**
    * Отправляет данные на сервер. Вызывает функции-обработчики для успешной и неуспешной отправки.

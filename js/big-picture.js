@@ -10,9 +10,7 @@
   var AVATAR_QUANTITY = 6;
   var ESC_KEYCODE = 27;
   var COMMENTS_QUANTITY = 5;
-
-  var commentsCounter = COMMENTS_QUANTITY;
-
+  var commentsCounter;
   /**
    * Показывает спрятанные комментарии, убирая у них класс 'visually-hidden'.
    * Обновляет данные счетчика комментариев, который показан на странице.
@@ -51,6 +49,7 @@
     bigPictureOverlay.classList.remove('hidden');
     document.addEventListener('click', overlayBigPictureClickHandler);
     document.addEventListener('keydown', escPressHandler);
+    commentsCounter = COMMENTS_QUANTITY;
     loadMoreButton.classList.remove('hidden');
     loadMoreButton.addEventListener('click', loadMoreButtonClickHandler);
   };
@@ -62,6 +61,7 @@
     window.kekstagram.util.removeAllChildren(socialCommentsUl);
     body.classList.remove('modal-open');
     bigPictureOverlay.classList.add('hidden');
+    bigPictureOverlay.querySelector('.big-picture__img > img').src = '';
     document.removeEventListener('click', overlayBigPictureClickHandler);
     document.removeEventListener('keydown', escPressHandler);
     loadMoreButton.removeEventListener('click', loadMoreButtonClickHandler);

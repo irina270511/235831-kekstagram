@@ -1,5 +1,8 @@
 'use strict';
 (function () {
+  var DEBOUNCE_INTERVAL = 500; // ms
+  var lastTimeout;
+
   window.kekstagram = {
     el: {
       uploadPreviewImg: document.querySelector('.img-upload__preview'), // effect.js + size.js
@@ -109,24 +112,15 @@
       },
 
       /**
-       * Функция "устранение дребезга". Если после вызова переданной функции успел пройти заданный временной интервал, переданная функция исполнится.
+       * Функция "устранение дребезга". Если после вызова переданной функции успел пройти заданный временной интервал (DEBOUNCE_INTERVAL), переданная функция исполнится.
        *
-       * @param {function} fn - функция, которая должна быть вызвана.
-       * @param {number} interval - временной интервал.
-       * @return {function} function - исполнение функции.
+       * @param {function} fun - функция, которая должна быть вызвана.
        */
-      debounce: function (fn, interval) {
-        var lastTimeout = null;
-
-        return function () {
-          var args = arguments;
-          if (lastTimeout) {
-            window.clearTimeout(lastTimeout);
-          }
-          lastTimeout = window.setTimeout(function () {
-            fn.apply(null, args);
-          }, interval);
-        };
+      debounce: function (fun) {
+        if (lastTimeout) {
+          window.clearTimeout(lastTimeout);
+        }
+        lastTimeout = window.setTimeout(fun, DEBOUNCE_INTERVAL);
       }
     }
   };

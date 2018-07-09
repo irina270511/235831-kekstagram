@@ -29,7 +29,7 @@
    * @param {string} id - id применяемого эффекта.
    */
   var checkEffect = function (id) {
-    if (!(id === 'effect-none')) {
+    if (id !== 'effect-none') {
       uploadScaleImg.classList.remove('hidden');
     } else {
       uploadScaleImg.classList.add('hidden');
@@ -37,21 +37,14 @@
   };
 
   /**
-   * Возвращает по id эффекта соответстующий класс, который нужно добавить картинке. При передаче неизвестного аргумента вернет undefined.
+   * Возвращает по названию эффекта соответстующий класс, который нужно добавить картинке.
+   * Название класса формируется из постоянной составляющей 'effects__preview--' и части названия эффекта (его id).
    *
-   * @param {string} id - id применяемого эффекта.
-   * @return {string} classes[id] - класс изображения с применяемым эффектом.
+   * @param {string} name - название применяемого эффекта.
+   * @return {string} - сформированный класс изображения с применяемым эффектом.
    */
-  var returnClassEffect = function (id) {
-    var classes = {
-      'effect-none': 'effects__preview--none',
-      'effect-chrome': 'effects__preview--chrome',
-      'effect-sepia': 'effects__preview--sepia',
-      'effect-marvin': 'effects__preview--marvin',
-      'effect-phobos': 'effects__preview--phobos',
-      'effect-heat': 'effects__preview--heat'
-    };
-    return classes[id];
+  var returnClassEffect = function (name) {
+    return 'effects__preview--' + name.split('-')[1];
   };
 
   /**
@@ -100,7 +93,7 @@
 
   var changeEffectLevel = function (level) {
     var effectId = document.querySelector('input[name=effect]:checked').id;
-    scaleValueInput.value = level;
+    scaleValueInput.value = level.toFixed();
     var filterValue = {
       'effect-chrome': 'grayscale(' + level / 100 + ')',
       'effect-sepia': 'sepia(' + level / 100 + ')',

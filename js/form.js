@@ -11,6 +11,7 @@
   var MAX_HASHTAG_QUANTITY = 5;
   var MAX_HASHTAG_SIZE = 20;
   var MIN_HASHTAG_SIZE = 2;
+  var FILE_TYPES = ['image/jpeg', 'image/jpg','image/png'];
 
   /**
    * Закрывает окно загрузки картинок по нажатию ESC.
@@ -93,6 +94,37 @@
   };
 
   /**
+   * Проверяет тип переданного файла на совпадение с одним из допустимых типов файла.
+   *
+   * @param {object} file - загружаемый файл.
+   * @param {string} file.type - тип файла.
+   * @return {boolean} file - возвращает true, если совпадение найдено, иначе - false.
+   */
+  var validateFileType = function (file) {
+    for(var i = 0; i < FILE_TYPES.length; i++) {
+      if(file.type === FILE_TYPES[i]) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  /**
+   * Перебирает загружаемые файлы, если типы файлов не совпадают с допустимыми - выдает сообщение об ошибке.
+   *
+   * @param {array} files - массив объектов - загружаемые файлов.
+   */
+  var validateFiles = function (files) {
+    for (var i = 0; i < files.length; i++) {
+      if (!validateFileType(files[i])) {
+        uploadStartButton.setCustomValidity('Вы можете загружать только изображения с форматами .png, .jpg, .jpeg');
+      } else {
+        uploadStartButton.setCustomValidity('');
+      }
+    }
+  };
+
+  /**
    * Обработчик успешного события загрузки картинки на сервер. Закрывает окно загрузки, перед этим скрывая кнопку загрузки.
    */
   var successHandler = function () {
@@ -112,6 +144,7 @@
 
   uploadStartButton.addEventListener('change', function () {
     openUploadOverlay();
+    validateFiles(uploadStartButton.files);
   });
 
   uploadOverlayCloseButton.addEventListener('click', function () {
