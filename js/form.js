@@ -3,11 +3,15 @@
   var hashtagsInput = document.querySelector('input[name=hashtags]');
   var descriptionTextarea = document.querySelector('textarea[name=description]');
   var form = document.querySelector('.img-upload__form');
-
+  var uploadLabel = document.querySelector('.img-upload__label');
   var uploadStartButton = document.querySelector('#upload-file');
   var uploadOverlay = document.querySelector('.img-upload__overlay');
   var uploadOverlayCloseButton = document.querySelector('#upload-cancel');
   var ESC_KEYCODE = 27;
+  var MAX_HASHTAG_QUANTITY = 5;
+  var MAX_HASHTAG_SIZE = 20;
+  var MIN_HASHTAG_SIZE = 2;
+  var FILE_TYPES = ['image/jpeg', 'image/jpg','image/png'];
 
   /**
    * Закрывает окно загрузки картинок по нажатию ESC.
@@ -44,6 +48,7 @@
    * Закрывает окно загрузки фотографий.
    */
   var closeUploadOverlay = function () {
+    uploadLabel.classList.add('hidden');
     uploadOverlay.classList.add('hidden');
     uploadStartButton.value = '';
     document.removeEventListener('keydown', escUploadPressHandler);
@@ -68,7 +73,7 @@
       return;
     }
     var hashtagsList = hashtags.split(' ');
-    if (hashtagsList.length > 5) {
+    if (hashtagsList.length > MAX_HASHTAG_QUANTITY) {
       input.setCustomValidity('Нельзя использовать больше 5 тегов');
     } else if (!window.kekstagram.util.checkRepeats(hashtagsList)) {
       input.setCustomValidity('Теги не должны повторяться. Теги нечувствительны к регистру: #ХэшТег и #хэштег считаются одним и тем же тегом');
@@ -76,10 +81,10 @@
       for (var i = 0; i < hashtagsList.length; i++) {
         if (!(hashtagsList[i].indexOf('#') === 0)) {
           input.setCustomValidity('Тег должен начинаться с символа решетки (#)');
-        } else if (hashtagsList[i].length < 2) {
-          input.setCustomValidity('Тег не может быть короче двух символов');
-        } else if (hashtagsList[i].length > 20) {
-          input.setCustomValidity('Тег не может быть длиннее 20 символов');
+        } else if (hashtagsList[i].length < MIN_HASHTAG_SIZE) {
+          input.setCustomValidity('Тег не может быть короче ' + MIN_HASHTAG_SIZE + ' символов');
+        } else if (hashtagsList[i].length > MAX_HASHTAG_SIZE) {
+          input.setCustomValidity('Тег не может быть длиннее ' + MAX_HASHTAG_SIZE + ' символов');
         } else {
           input.setCustomValidity('');
         }
@@ -89,9 +94,41 @@
   };
 
   /**
-   * Обработчик успешного события загрузки картинки на сервер. Закрывает окно загрузки.
+   * Проверяет тип переданного файла на совпадение с одним из допустимых типов файла.
+   *
+   * @param {object} file - загружаемый файл.
+   * @param {string} file.type - тип файла.
+   * @return {boolean} file - возвращает true, если совпадение найдено, иначе - false.
+   */
+  var validateFileType = function (file) {
+    for(var i = 0; i < FILE_TYPES.length; i++) {
+      if(file.type === FILE_TYPES[i]) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  /**
+   * Перебирает загружаемые файлы, если типы файлов не совпадают с допустимыми - выдает сообщение об ошибке.
+   *
+   * @param {array} files - массив объектов - загружаемые файлов.
+   */
+  var validateFiles = function (files) {
+    for (var i = 0; i < files.length; i++) {
+      if (!validateFileType(files[i])) {
+        uploadStartButton.setCustomValidity('Вы можете загружать только изображения с форматами .png, .jpg, .jpeg');
+      } else {
+        uploadStartButton.setCustomValidity('');
+      }
+    }
+  };
+
+  /**
+   * Обработчик успешного события загрузки картинки на сервер. Закрывает окно загрузки, перед этим скрывая кнопку загрузки.
    */
   var successHandler = function () {
+    uploadLabel.classList.add('hidden');
     closeUploadOverlay();
   };
 
@@ -107,6 +144,7 @@
 
   uploadStartButton.addEventListener('change', function () {
     openUploadOverlay();
+    validateFiles(uploadStartButton.files);
   });
 
   uploadOverlayCloseButton.addEventListener('click', function () {

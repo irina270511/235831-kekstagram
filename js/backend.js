@@ -1,8 +1,8 @@
 'use strict';
-
 (function () {
   var UPLOAD_URL = 'https://js.dump.academy/kekstagram';
   var DOWNLOAD_URL = 'https://js.dump.academy/kekstagram/data';
+  var DEFAULT_TIMEOUT = 30000;
 
   /**
    * Отправляет данные на сервер. Вызывает функции-обработчики для успешной и неуспешной отправки.
@@ -16,7 +16,7 @@
     var xhr = new XMLHttpRequest();
 
     xhr.responseType = 'json';
-    xhr.timeout = 10000;
+    xhr.timeout = DEFAULT_TIMEOUT;
 
     xhr.addEventListener('load', function () {
       var error;
@@ -67,7 +67,7 @@
     var xhr = new XMLHttpRequest();
 
     xhr.responseType = 'json';
-    xhr.timeout = 10000;
+    xhr.timeout = DEFAULT_TIMEOUT;
 
     xhr.addEventListener('load', function () {
       var error;
