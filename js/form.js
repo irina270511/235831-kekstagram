@@ -3,7 +3,6 @@
   var hashtagsInput = document.querySelector('input[name=hashtags]');
   var descriptionTextarea = document.querySelector('textarea[name=description]');
   var form = document.querySelector('.img-upload__form');
-  var uploadLabel = document.querySelector('.img-upload__label');
   var uploadStartButton = document.querySelector('#upload-file');
   var uploadOverlay = document.querySelector('.img-upload__overlay');
   var uploadOverlayCloseButton = document.querySelector('#upload-cancel');
@@ -35,8 +34,8 @@
     }
   };
 
-  var inputHandler = function (evt) {
-    if (hashtagsInput.value === ''){
+  var inputHandler = function () {
+    if (hashtagsInput.value === '') {
       hashtagsInput.setCustomValidity('');
     } else {
       validateHashtags(hashtagsInput);
