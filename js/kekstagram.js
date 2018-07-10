@@ -1,5 +1,6 @@
 'use strict';
 (function () {
+  var DEFAULT_SIZE = '100%';
   var DEBOUNCE_INTERVAL = 500; // ms
   var lastTimeout;
 
@@ -7,7 +8,10 @@
     el: {
       uploadPreviewImg: document.querySelector('.img-upload__preview'), // effect.js + size.js
       sizeValueInput: document.querySelector('.resize__control--value'), // effect.js + size.js
-      picturesSection: document.querySelector('.pictures') // gallery.js + big_picture.js
+      picturesSection: document.querySelector('.pictures'), // gallery.js + big_picture.js
+      uploadScaleImg: document.querySelector('.img-upload__scale'), //effects.js + fn
+      scalePin: document.querySelector('.scale__pin'), //effects.js + fn
+      scaleLevel: document.querySelector('.scale__level') //effects.js + fn
     },
 
     fn: {
@@ -63,6 +67,19 @@
         pictureElement.querySelector('.picture__stat--comments').textContent = picture.comments.length;
 
         return pictureElement;
+      },
+
+      /**
+       * Сбрасывает заданные параметры картинки.
+       * Меняет положение слайдера и размер картинки на значения по умолчанию. Вызывает удаление всех классов у картинки.
+       */
+      clearStyle: function () {
+        window.kekstagram.el.scalePin.style.left = '';
+        window.kekstagram.el.scaleLevel.style.width = '';
+        window.kekstagram.el.uploadPreviewImg.style = '';
+        window.kekstagram.el.sizeValueInput.value = DEFAULT_SIZE;
+        window.kekstagram.el.uploadScaleImg.classList.add('hidden');
+        clearClassList(window.kekstagram.el.uploadPreviewImg);
       }
     },
 
@@ -121,6 +138,20 @@
           window.clearTimeout(lastTimeout);
         }
         lastTimeout = window.setTimeout(fun, DEBOUNCE_INTERVAL);
+      }
+    }
+  };
+
+  /**
+   * Удаляет все классы у переданного элемента, кроме класса 'img-upload__preview'. Используется функцией clearStyle.
+   *
+   * @param {object} element - DOM-элемент у которого необходимо удалить все классы.
+   */
+  var clearClassList = function (element) {
+    var elementClassList = element.classList;
+    for (var i = 0; i < elementClassList.length; i++) {
+      if (elementClassList[i] !== 'img-upload__preview') {
+        element.classList.remove(elementClassList[i]);
       }
     }
   };

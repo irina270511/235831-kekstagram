@@ -35,6 +35,14 @@
     }
   };
 
+  var inputHandler = function (evt) {
+    if (hashtagsInput.value === ''){
+      hashtagsInput.setCustomValidity('');
+    } else {
+      validateHashtags(hashtagsInput);
+    }
+  };
+
   /**
    * Открывает окно загрузки фотографий.
    */
@@ -42,17 +50,20 @@
     uploadOverlay.classList.remove('hidden');
     document.addEventListener('keydown', escUploadPressHandler);
     document.addEventListener('click', overlayUploadClickHandler);
+    hashtagsInput.addEventListener('keyup', inputHandler);
+
   };
 
   /**
    * Закрывает окно загрузки фотографий.
    */
   var closeUploadOverlay = function () {
-    uploadLabel.classList.add('hidden');
     uploadOverlay.classList.add('hidden');
-    uploadStartButton.value = '';
+    form.reset();
+    window.kekstagram.fn.clearStyle();
     document.removeEventListener('keydown', escUploadPressHandler);
     document.removeEventListener('click', overlayUploadClickHandler);
+    hashtagsInput.removeEventListener('keyup', inputHandler);
   };
 
   /**
@@ -125,15 +136,14 @@
   };
 
   /**
-   * Обработчик успешного события загрузки картинки на сервер. Закрывает окно загрузки, перед этим скрывая кнопку загрузки.
+   * Обработчик успешного события загрузки картинки на сервер. Вызывает закрытие окна загрузки.
    */
   var successHandler = function () {
-    uploadLabel.classList.add('hidden');
     closeUploadOverlay();
   };
 
   /**
-   * Обработчик неуспешного события загрузки картинки на сервер. Вызывает функцию отрисовки сообщения об ошибке и закрывает окно загрузки.
+   * Обработчик неуспешного события загрузки картинки на сервер. Вызывает функцию отрисовки сообщения об ошибке и закрытие окна загрузки.
    *
    * @param {string} errorMessage - текст сообщения об ошибке.
    */
@@ -157,7 +167,6 @@
 
   hashtagsInput.addEventListener('blur', function () {
     document.addEventListener('keydown', escUploadPressHandler);
-    validateHashtags(hashtagsInput);
   });
 
   descriptionTextarea.addEventListener('focus', function () {

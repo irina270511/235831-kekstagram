@@ -1,12 +1,8 @@
 'use strict';
 (function () {
-  var uploadScaleImg = document.querySelector('.img-upload__scale');
   var scaleValueInput = document.querySelector('.scale__value');
-  var scaleLevel = document.querySelector('.scale__level');
-  var scalePin = document.querySelector('.scale__pin');
   var scaleLine = document.querySelector('.scale__line');
   var effectsListUl = document.querySelector('.effects__list');
-  var DEFAULT_SIZE = '100%';
 
   /**
    * Находит координаты линии слайдера.
@@ -30,9 +26,9 @@
    */
   var checkEffect = function (id) {
     if (id !== 'effect-none') {
-      uploadScaleImg.classList.remove('hidden');
+      window.kekstagram.el.uploadScaleImg.classList.remove('hidden');
     } else {
-      uploadScaleImg.classList.add('hidden');
+      window.kekstagram.el.uploadScaleImg.classList.add('hidden');
     }
   };
 
@@ -48,37 +44,17 @@
   };
 
   /**
-   * Удаляет все классы у переданного элемента, кроме класса 'img-upload__preview'.
-   *
-   * @param {object} element - DOM-элемент у которого необходимо удалить все классы.
-   */
-  var clearClassList = function (element) {
-    var elementClassList = element.classList;
-    for (var i = 0; i < elementClassList.length; i++) {
-      if (elementClassList[i] !== 'img-upload__preview') {
-        element.classList.remove(elementClassList[i]);
-      }
-    }
-  };
-
-  /**
    * Меняет эффект на превью картинки, добавляя ей необходимый класс. Основывается на id выбранного эффекта.
-   * Перед сменой эффекта меняет положение слайдера и размер картинки на значения по умолчанию.
+   * Перед сменой эффекта вызывает функцию очищения предыдущих параметров картинки.
    *
    * @param {string} id - id выбранного эффекта.
    */
   var changeEffect = function (id) {
-    scalePin.style.left = '';
-    scaleLevel.style.width = '';
-    window.kekstagram.el.uploadPreviewImg.style = '';
-    window.kekstagram.el.sizeValueInput.value = DEFAULT_SIZE;
-
+    window.kekstagram.fn.clearStyle();
     var newClass = returnClassEffect(id);
     checkEffect(id);
-    clearClassList(window.kekstagram.el.uploadPreviewImg);
     window.kekstagram.el.uploadPreviewImg.classList.add(newClass);
   };
-
 
   /**
    * Меняет уровень эффекта пропорционально, в зависимости от id выбранного эффекта.
@@ -90,7 +66,6 @@
    *
    * @param {number} level -  выставленный уровень применяемого эффекта.
    */
-
   var changeEffectLevel = function (level) {
     var effectId = document.querySelector('input[name=effect]:checked').id;
     scaleValueInput.value = level.toFixed();
@@ -118,8 +93,8 @@
       var shift = coordinateX - scaleCoords.fin;
       var level = shift / scaleCoords.width * 100;
 
-      scalePin.style.left = shift + 'px';
-      scaleLevel.style.width = level + '%';
+      window.kekstagram.el.scalePin.style.left = shift + 'px';
+      window.kekstagram.el.scaleLevel.style.width = level + '%';
       changeEffectLevel(level);
     }
   };
@@ -128,7 +103,7 @@
     changeEffect(evt.target.id);
   });
 
-  scalePin.addEventListener('mousedown', function (evt) {
+  window.kekstagram.el.scalePin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
     var coords = findScaleCoords();
 
