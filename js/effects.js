@@ -121,7 +121,6 @@
 
     document.addEventListener('mousemove', mouseMoveScaleHandler);
     document.addEventListener('mouseup', mouseUpScaleHandler);
-
   });
 
 })();
