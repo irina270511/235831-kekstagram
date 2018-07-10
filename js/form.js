@@ -3,7 +3,6 @@
   var hashtagsInput = document.querySelector('input[name=hashtags]');
   var descriptionTextarea = document.querySelector('textarea[name=description]');
   var form = document.querySelector('.img-upload__form');
-  var uploadLabel = document.querySelector('.img-upload__label');
   var uploadStartButton = document.querySelector('#upload-file');
   var uploadOverlay = document.querySelector('.img-upload__overlay');
   var uploadOverlayCloseButton = document.querySelector('#upload-cancel');
@@ -12,59 +11,6 @@
   var MAX_HASHTAG_SIZE = 20;
   var MIN_HASHTAG_SIZE = 2;
   var FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
-
-  /**
-   * Закрывает окно загрузки картинок по нажатию ESC.
-   *
-   * @param {KeyboardEvent} evt - объект Event.
-   */
-  var escUploadPressHandler = function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
-      closeUploadOverlay();
-    }
-  };
-
-  /**
-   * Вызывает закрытие окна загрузки при клике на поле overlayUpload, вне поля окна загрузки
-   *
-   * @param {MouseEvent} evt - объект Event.
-   */
-  var overlayUploadClickHandler = function (evt) {
-    if (evt.target === uploadOverlay) {
-      closeUploadOverlay();
-    }
-  };
-
-  var inputHandler = function (evt) {
-    if (hashtagsInput.value === ''){
-      hashtagsInput.setCustomValidity('');
-    } else {
-      validateHashtags(hashtagsInput);
-    }
-  };
-
-  /**
-   * Открывает окно загрузки фотографий.
-   */
-  var openUploadOverlay = function () {
-    uploadOverlay.classList.remove('hidden');
-    document.addEventListener('keydown', escUploadPressHandler);
-    document.addEventListener('click', overlayUploadClickHandler);
-    hashtagsInput.addEventListener('keyup', inputHandler);
-
-  };
-
-  /**
-   * Закрывает окно загрузки фотографий.
-   */
-  var closeUploadOverlay = function () {
-    uploadOverlay.classList.add('hidden');
-    form.reset();
-    window.kekstagram.fn.clearStyle();
-    document.removeEventListener('keydown', escUploadPressHandler);
-    document.removeEventListener('click', overlayUploadClickHandler);
-    hashtagsInput.removeEventListener('keyup', inputHandler);
-  };
 
   /**
    * Проверяет введенные хэштеги на соответствие заданным условиям. Если поле инпута пустое - проверка не осуществляется.
@@ -133,6 +79,59 @@
         uploadStartButton.setCustomValidity('');
       }
     }
+  };
+
+  /**
+   * Закрывает окно загрузки картинок по нажатию ESC.
+   *
+   * @param {KeyboardEvent} evt - объект Event.
+   */
+  var escUploadPressHandler = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      closeUploadOverlay();
+    }
+  };
+
+  /**
+   * Вызывает закрытие окна загрузки при клике на поле overlayUpload, вне поля окна загрузки
+   *
+   * @param {MouseEvent} evt - объект Event.
+   */
+  var overlayUploadClickHandler = function (evt) {
+    if (evt.target === uploadOverlay) {
+      closeUploadOverlay();
+    }
+  };
+
+  /**
+   * Вызывает проверку данных, введенных в поле хэштегов.
+   */
+  var hashtagsInputHandler = function () {
+    validateHashtags(hashtagsInput);
+  };
+
+  /**
+   * Открывает окно загрузки фотографий.
+   */
+  var openUploadOverlay = function () {
+    uploadOverlay.classList.remove('hidden');
+    document.addEventListener('keydown', escUploadPressHandler);
+    document.addEventListener('click', overlayUploadClickHandler);
+    hashtagsInput.addEventListener('keyup', hashtagsInputHandler);
+
+  };
+
+  /**
+   * Закрывает окно загрузки фотографий.
+   */
+  var closeUploadOverlay = function () {
+    uploadOverlay.classList.add('hidden');
+    form.reset();
+    window.kekstagram.fn.clearStyle();
+    hashtagsInput.setCustomValidity('');
+    hashtagsInput.removeEventListener('keyup', hashtagsInputHandler);
+    document.removeEventListener('keydown', escUploadPressHandler);
+    document.removeEventListener('click', overlayUploadClickHandler);
   };
 
   /**
